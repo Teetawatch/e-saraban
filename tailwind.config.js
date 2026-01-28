@@ -1,0 +1,32 @@
+import defaultTheme from 'tailwindcss/defaultTheme';
+import forms from '@tailwindcss/forms';
+
+/** @type {import('tailwindcss').Config} */
+export default {
+    content: [
+        './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
+        './storage/framework/views/*.php',
+        './resources/views/**/*.blade.php',
+    ],
+    theme: {
+        extend: {
+            fontFamily: {
+                // บังคับใช้ Kanit เป็นฟอนต์หลักทั้งระบบ
+                sans: ['Kanit', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                // กำหนดสีธีมหลัก (ตัวอย่าง: สีน้ำเงินกรมท่าแบบสมัยใหม่)
+                primary: {
+                    50: '#f0f9ff',
+                    100: '#e0f2fe',
+                    500: '#0ea5e9',
+                    600: '#0284c7',
+                    700: '#0369a1', // Main Brand Color
+                    800: '#075985',
+                    900: '#0c4a6e',
+                }
+            }
+        },
+    },
+    plugins: [forms],
+};
