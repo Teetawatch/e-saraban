@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -12,11 +16,11 @@ class DepartmentController extends Controller
      * Display a listing of the resource.
      * แสดงรายการหน่วยงานทั้งหมด
      */
-    public function index()
+    public function index(): View
     {
         // ดึงข้อมูลหน่วยงานทั้งหมด เรียงจากล่าสุดไปเก่า แบ่งหน้าละ 10 รายการ
         $departments = Department::orderBy('id', 'desc')->paginate(10);
-        
+
         return view('admin.departments.index', compact('departments'));
     }
 
@@ -24,7 +28,7 @@ class DepartmentController extends Controller
      * Show the form for creating a new resource.
      * แสดงแบบฟอร์มเพิ่มหน่วยงานใหม่
      */
-    public function create()
+    public function create(): View
     {
         return view('admin.departments.create');
     }
@@ -33,7 +37,7 @@ class DepartmentController extends Controller
      * Store a newly created resource in storage.
      * บันทึกข้อมูลหน่วยงานใหม่ลงฐานข้อมูล
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // 1. ตรวจสอบความถูกต้องของข้อมูล (Validation)
         $request->validate([
@@ -61,7 +65,7 @@ class DepartmentController extends Controller
      * Show the form for editing the specified resource.
      * แสดงแบบฟอร์มแก้ไขข้อมูลหน่วยงาน
      */
-    public function edit(Department $department)
+    public function edit(Department $department): View
     {
         return view('admin.departments.edit', compact('department'));
     }
@@ -70,7 +74,7 @@ class DepartmentController extends Controller
      * Update the specified resource in storage.
      * บันทึกการแก้ไขข้อมูลหน่วยงาน
      */
-    public function update(Request $request, Department $department)
+    public function update(Request $request, Department $department): RedirectResponse
     {
         // 1. ตรวจสอบความถูกต้อง (Validate)
         $request->validate([
@@ -97,7 +101,7 @@ class DepartmentController extends Controller
      * Remove the specified resource from storage.
      * ลบข้อมูลหน่วยงาน
      */
-    public function destroy(Department $department)
+    public function destroy(Department $department): RedirectResponse
     {
         // 1. เช็คความสัมพันธ์ (Data Integrity Check)
         $errors = [];
@@ -126,7 +130,7 @@ class DepartmentController extends Controller
         try {
             // ลบ Sequence ที่ยังไม่ได้ใช้ (ถ้ามี) ก่อนลบ Department
             $department->sequences()->delete();
-            
+
             $department->delete();
             return back()->with('success', 'ลบหน่วยงานเรียบร้อยแล้ว');
         } catch (\Exception $e) {

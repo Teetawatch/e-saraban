@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -11,7 +12,7 @@ class StorageController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke($path)
+    public function __invoke(string $path): StreamedResponse
     {
         // ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่
         if (!Storage::disk('public')->exists($path)) {

@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
@@ -13,7 +17,7 @@ class ProfileController extends Controller
     /**
      * แสดงหน้าฟอร์มแก้ไขข้อมูลส่วนตัว
      */
-    public function edit()
+    public function edit(): View
     {
         return view('profile.edit', [
             'user' => auth()->user(),
@@ -23,7 +27,7 @@ class ProfileController extends Controller
     /**
      * อัปเดตข้อมูลทั่วไป (ชื่อ, อีเมล, รูปภาพ)
      */
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
         $user = auth()->user();
 
@@ -57,7 +61,7 @@ class ProfileController extends Controller
     /**
      * เปลี่ยนรหัสผ่าน
      */
-    public function updatePassword(Request $request)
+    public function updatePassword(Request $request): RedirectResponse
     {
         $request->validate([
             'current_password' => ['required', 'current_password'],

@@ -1,30 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Models\Document;
+use App\Models\Folder;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class FolderController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of the folders.
+     */
+    public function index(): View
     {
         $user = auth()->user();
-        $folders = \App\Models\Folder::where('department_id', $user->department_id)
-                    ->withCount('documents')
-                    ->latest()
-                    ->get();
-                    
+        $folders = Folder::where('department_id', $user->department_id)
+            ->withCount('documents')
+            ->latest()
+            ->get();
+
         return view('folders.index', compact('folders'));
     }
 
-    public function store(\Illuminate\Http\Request $request)
+    /**
+     * Store a newly created folder in storage.
+     */
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'year' => 'nullable|string|max:4',
         ]);
 
-        \App\Models\Folder::create([
+        Folder::create([
             'name' => $request->name,
             'description' => $request->description,
             'year' => $request->year ?? (date('Y') + 543),
@@ -35,7 +47,10 @@ class FolderController extends Controller
         return back()->with('success', 'สร้างแฟ้มเรียบร้อยแล้ว');
     }
 
-    public function show(\App\Models\Folder $folder)
+    /**
+     * Display the specified folder.
+     */
+    public function show(Folder $folder): View
     {
         // Check access permission (same department)
         if ($folder->department_id !== auth()->user()->department_id) {
@@ -45,15 +60,19 @@ class FolderController extends Controller
         $documents = $folder->documents()->latest()->get();
         return view('folders.show', compact('folder', 'documents'));
     }
-    
-    public function fileDocument(\Illuminate\Http\Request $request, \App\Models\Document $document)
+
+    /**
+     * File a document into a folder.
+     */
+    public function fileDocument(Request $request, Document $document): RedirectResponse
     {
         $request->validate([
             'folder_id' => 'required|exists:folders,id'
         ]);
-        
+
         // Validation: Folder must belong to same department
-        $folder = \App\Models\Folder::findOrFail($request->folder_id);
+        $folder = Folder::findOrFail($request->folder_id);
+
         if ($folder->department_id !== auth()->user()->department_id) {
             abort(403, 'Unauthorized access to folder');
         }
