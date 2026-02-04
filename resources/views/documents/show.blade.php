@@ -19,6 +19,50 @@
             }
         }">
 
+    @php
+        // Logic: ตรวจสอบว่าผู้รับทุกคนในรายการ Send ได้รับเรื่องแล้วหรือไม่ (Auto-Close Visual)
+        $allReceived = false;
+        $activeRoutes = $document->routes;
+        
+        // ต้องเป็นสถานะ Active และมีการส่งออกไปแล้ว
+        if ($document->status == 'active' && $activeRoutes->where('action', 'send')->count() > 0) {
+            $pendingSends = 0;
+            
+            foreach ($activeRoutes as $idx => $route) {
+                if ($route->action == 'send') {
+                    $isAck = false;
+                    $targetUserId = $route->to_user_id;
+                    $targetDeptId = $route->to_department_id;
+                    
+                    // Lookahead: เช็คว่ามี Route ต่อจากนี้ที่ตอบรับหรือไม่
+                    $laterRoutes = $activeRoutes->slice($idx + 1);
+                    foreach ($laterRoutes as $lr) {
+                        // กรณีส่งให้บุคคล -> คนนั้นทำรายการอะไรก็ได้กลับมา (รับ/ส่งต่อ/ปิด/คอมเมนต์)
+                        if ($targetUserId && $lr->from_user_id == $targetUserId) {
+                            $isAck = true; break;
+                        }
+                        // กรณีส่งให้หน่วยงาน -> ใครก็ได้ในหน่วยงานนั้นทำรายการกลับมา
+                        if ($targetDeptId && $lr->fromUser && $lr->fromUser->department_id == $targetDeptId) {
+                            $isAck = true; break;
+                        }
+                    }
+                    
+                    if (!$isAck) {
+                        $pendingSends++;
+                    }
+                }
+            }
+            
+            // ถ้าไม่มี pending sends ถือว่าครบแล้ว
+            if ($pendingSends == 0) {
+                $allReceived = true;
+            }
+        }
+        
+        // Override Status สำหรับการแสดงผลเท่านั้น
+        $runtimeStatus = $allReceived ? 'closed' : $document->status;
+    @endphp
+
         <!-- Top Navigation -->
         <nav class="flex items-center text-sm text-slate-500 mb-6">
             <a href="{{ route('dashboard') }}" class="hover:text-brand-600 transition-colors"><i
@@ -49,7 +93,7 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
                     <!-- Status Strip Top -->
                     <div
-                        class="h-2 w-full {{ match ($document->status) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', default => 'bg-slate-400'} }}">
+                        class="h-2 w-full {{ match ($runtimeStatus) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', default => 'bg-slate-400'} }}">
                     </div>
 
                     <div class="p-6 sm:p-8">
@@ -73,19 +117,19 @@
                             </div>
                             <div class="text-right">
                                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium
-                                    {{ match ($document->status) {
+                                    {{ match ($runtimeStatus) {
         'draft' => 'bg-slate-100 text-slate-600',
         'active' => 'bg-brand-50 text-brand-700 border border-brand-100',
         'closed' => 'bg-emerald-50 text-emerald-700 border border-emerald-100',
         default => 'bg-slate-100 text-slate-600'
     } }}">
                                     <span
-                                        class="w-2 h-2 rounded-full {{ match ($document->status) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', default => 'bg-slate-400'} }}"></span>
-                                    {{ match ($document->status) {
+                                        class="w-2 h-2 rounded-full {{ match ($runtimeStatus) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', default => 'bg-slate-400'} }}"></span>
+                                    {{ match ($runtimeStatus) {
         'draft' => 'ฉบับร่าง',
         'active' => 'กำลังดำเนินการ',
-        'closed' => 'ปิดเรื่องแล้ว',
-        default => $document->status
+        'closed' => 'ดำเนินการเสร็จสิ้น',
+        default => $runtimeStatus
     } }}
                                 </span>
                             </div>
@@ -287,7 +331,7 @@
 
                 <!-- Actions Card (Sticky on Desktop) -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    @if($document->status !== 'closed')
+                    @if($runtimeStatus !== 'closed')
                         <h3 class="font-bold text-slate-800 mb-4">การดำเนินการ</h3>
                         <div class="space-y-3">
                             <button @click="actionType = 'send'; modalOpen = true"
@@ -326,7 +370,11 @@
                                 <i class="fa-solid fa-check text-3xl"></i>
                             </div>
                             <h3 class="font-bold text-slate-800 text-lg">ดำเนินการเสร็จสิ้น</h3>
-                            <p class="text-slate-500 text-sm mt-2">เอกสารนี้ถูกปิดเรื่องเรียบร้อยแล้ว</p>
+                            <p class="text-slate-500 text-sm mt-2">เอกสารนี้ถูกปิดเรื่องเรียบร้อยแล้ว<br>
+                                @if($allReceived && $document->status != 'closed')
+                                <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1 inline-block">ครบองค์ประกอบการรับ</span>
+                                @endif
+                            </p>
 
                             <!-- Filing Section -->
                             <div class="mt-6 pt-6 border-t border-slate-100">
@@ -396,7 +444,7 @@
                                                                 // เช็คว่าเวลาใกล้เคียงกับรายการสุดท้ายหรือไม่ (ไม่เกิน 2 วินาที) ถือเป็น Batch เดียวกัน
                                                                 $isLatestBatch = $route->created_at->diffInSeconds($lastRouteTime) < 2;
 
-                                                                $isPending = $isLatestBatch && $route->action == 'send' && $document->status != 'closed';
+                                                                $isPending = $isLatestBatch && $route->action == 'send' && $runtimeStatus != 'closed';
                                                             @endphp
 
                                                             <div class="relative flex gap-4">

@@ -11,7 +11,9 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- CSS & JS Assets (Manual Load for Shared Host) -->
+    <link rel="stylesheet" href="{{ asset('build/assets/app-BILHC7h_.css') }}">
+    <script type="module" src="{{ asset('build/assets/app-kGY04szw.js') }}"></script>
     <style>
         body {
             font-family: 'Kanit', sans-serif;
