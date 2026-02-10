@@ -215,8 +215,8 @@
                 <!-- Footer Info -->
                 <div class="mt-10 text-center">
                     <p class="text-slate-400 text-xs">
-                        &copy; {{ date('Y') }} กรมพลาธิการทหารเรือ.<br>
-                        พัฒนาโดย จ.ท.ธีร์ธวัช พิพัฒน์เดชธน
+                        &copy; {{ date('Y') }} โรงเรียนพลาธิการ กรมพลาธิการทหารเรือ.<br>
+                        ออกแบบและพัฒนาระบบ จ.ท.ธีร์ธวัช พิพัฒน์เดชธน
                     </p>
                     <div
                         class="flex justify-center gap-4 mt-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">

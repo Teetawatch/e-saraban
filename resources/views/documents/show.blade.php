@@ -59,8 +59,8 @@
             }
         }
         
-        // Override Status สำหรับการแสดงผลเท่านั้น
-        $runtimeStatus = $allReceived ? 'closed' : $document->status;
+        // Override Status สำหรับการแสดงผลเท่านั้น (ยกเว้น cancelled)
+        $runtimeStatus = $document->status === 'cancelled' ? 'cancelled' : ($allReceived ? 'closed' : $document->status);
     @endphp
 
         <!-- Top Navigation -->
@@ -103,7 +103,7 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
                     <!-- Status Strip Top -->
                     <div
-                        class="h-2 w-full {{ match ($runtimeStatus) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', default => 'bg-slate-400'} }}">
+                        class="h-2 w-full {{ match ($runtimeStatus) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', 'cancelled' => 'bg-red-500', default => 'bg-slate-400'} }}">
                     </div>
 
                     <div class="p-6 sm:p-8">
@@ -111,7 +111,7 @@
                         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                             <div class="flex items-center gap-3">
                                 <span
-                                    class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-mono font-bold border border-slate-200">
+                                    class="px-3 py-1 rounded-lg text-xs font-mono font-bold border {{ $runtimeStatus === 'cancelled' ? 'bg-red-50 text-red-500 border-red-200 line-through' : 'bg-slate-100 text-slate-600 border-slate-200' }}">
                                     {{ $document->document_no }}
                                 </span>
                                 <span class="px-2 py-1 rounded text-xs font-bold border"
@@ -131,14 +131,20 @@
         'draft' => 'bg-slate-100 text-slate-600',
         'active' => 'bg-brand-50 text-brand-700 border border-brand-100',
         'closed' => 'bg-emerald-50 text-emerald-700 border border-emerald-100',
+        'cancelled' => 'bg-red-50 text-red-600 border border-red-200',
         default => 'bg-slate-100 text-slate-600'
     } }}">
-                                    <span
-                                        class="w-2 h-2 rounded-full {{ match ($runtimeStatus) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', default => 'bg-slate-400'} }}"></span>
+                                    @if($runtimeStatus === 'cancelled')
+                                        <i class="fa-solid fa-ban text-red-500"></i>
+                                    @else
+                                        <span
+                                            class="w-2 h-2 rounded-full {{ match ($runtimeStatus) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', default => 'bg-slate-400'} }}"></span>
+                                    @endif
                                     {{ match ($runtimeStatus) {
         'draft' => 'ฉบับร่าง',
         'active' => 'กำลังดำเนินการ',
         'closed' => 'ดำเนินการเสร็จสิ้น',
+        'cancelled' => 'ยกเลิกการส่ง',
         default => $runtimeStatus
     } }}
                                 </span>
@@ -146,7 +152,7 @@
                         </div>
 
                         <!-- Title -->
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 leading-snug mb-6">
+                        <h1 class="text-2xl sm:text-3xl font-bold leading-snug mb-6 {{ $runtimeStatus === 'cancelled' ? 'text-red-400 line-through' : 'text-slate-800' }}">
                             {{ $document->title }}
                         </h1>
 
@@ -344,7 +350,27 @@
 
                 <!-- Actions Card (Sticky on Desktop) -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    @if($runtimeStatus !== 'closed')
+                    @if($runtimeStatus === 'cancelled')
+                        {{-- สถานะ ยกเลิกการส่ง --}}
+                        <div class="text-center">
+                            <div
+                                class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fa-solid fa-ban text-3xl"></i>
+                            </div>
+                            <h3 class="font-bold text-red-600 text-lg">ยกเลิกการส่งแล้ว</h3>
+                            <p class="text-slate-500 text-sm mt-2">เอกสารนี้ถูกยกเลิกการส่งโดยผู้สร้าง</p>
+
+                            @php
+                                $cancelRoute = $document->routes->where('action', 'cancel_send')->last();
+                            @endphp
+                            @if($cancelRoute)
+                                <div class="mt-4 p-3 bg-red-50 rounded-xl border border-red-100 text-left">
+                                    <p class="text-xs text-red-400 mb-1">ยกเลิกเมื่อ</p>
+                                    <p class="text-sm font-medium text-red-600">{{ $cancelRoute->created_at->toThaiDateTime() }} น.</p>
+                                </div>
+                            @endif
+                        </div>
+                    @elseif($runtimeStatus !== 'closed')
                         <h3 class="font-bold text-slate-800 mb-4">การดำเนินการ</h3>
                         <div class="space-y-3">
                             <button @click="actionType = 'send'; modalOpen = true"
@@ -389,14 +415,14 @@
                             @if($canCancelSend)
                                 <div class="pt-3 mt-3 border-t border-slate-100">
                                     <form action="{{ route('documents.cancelSend', $document) }}" method="POST"
-                                        onsubmit="return confirm('คุณต้องการยกเลิกการส่งเอกสารนี้ใช่หรือไม่?\n\nเอกสารจะกลับเป็นสถานะ \'ฉบับร่าง\' และรายการส่งทั้งหมดจะถูกลบ')">
+                                        onsubmit="return confirm('คุณต้องการยกเลิกการส่งเอกสารนี้ใช่หรือไม่?\n\nเอกสารจะถูกยกเลิกการส่งและรายการส่งทั้งหมดจะถูกลบ')">
                                         @csrf
                                         <button type="submit"
                                             class="w-full py-2.5 px-4 bg-white border-2 border-red-200 hover:bg-red-50 hover:border-red-300 text-red-600 rounded-xl font-medium transition-all flex items-center justify-center gap-2">
-                                            <i class="fa-solid fa-rotate-left"></i> ยกเลิกการส่ง
+                                            <i class="fa-solid fa-ban"></i> ยกเลิกการส่ง
                                         </button>
                                     </form>
-                                    <p class="text-xs text-slate-400 mt-2 text-center">เอกสารจะกลับเป็น "ฉบับร่าง"</p>
+                                    <p class="text-xs text-slate-400 mt-2 text-center">เอกสารจะถูกยกเลิกการส่ง</p>
                                 </div>
                             @endif
                         </div>

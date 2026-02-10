@@ -440,8 +440,8 @@ class DocumentController extends Controller
             // ลบ Routes ที่เป็น action 'send' ทั้งหมด
             $document->routes()->where('action', 'send')->delete();
 
-            // เปลี่ยนสถานะกลับเป็น draft
-            $document->update(['status' => 'draft']);
+            // เปลี่ยนสถานะเป็น cancelled (ยกเลิกการส่ง)
+            $document->update(['status' => 'cancelled']);
 
             // บันทึก Route การยกเลิก
             $document->routes()->create([
@@ -455,7 +455,7 @@ class DocumentController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'ยกเลิกการส่งเอกสารเรียบร้อยแล้ว เอกสารกลับเป็นสถานะ "ฉบับร่าง"');
+            return back()->with('success', 'ยกเลิกการส่งเอกสารเรียบร้อยแล้ว');
 
         } catch (\Exception $e) {
             DB::rollBack();

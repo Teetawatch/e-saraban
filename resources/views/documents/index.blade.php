@@ -89,7 +89,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-50">
                         @forelse($documents as $doc)
-                            <tr class="group hover:bg-slate-50 transition-colors cursor-pointer"
+                            <tr class="group hover:bg-slate-50 transition-colors cursor-pointer {{ $doc->status === 'cancelled' ? 'opacity-60' : '' }}"
                                 onclick="window.location='{{ route('documents.show', $doc) }}'">
 
                                 <!-- Col 1: Document No & Date -->
@@ -123,7 +123,7 @@
                                             </span>
                                         @else
                                             <span
-                                                class="font-mono font-bold text-slate-700 text-sm group-hover:text-brand-700 transition-colors">
+                                                class="font-mono font-bold text-sm transition-colors {{ $doc->status === 'cancelled' ? 'text-red-400 line-through' : 'text-slate-700 group-hover:text-brand-700' }}">
                                                 {{ $doc->document_no }}
                                             </span>
                                         @endif
@@ -147,7 +147,7 @@
                                         </div>
                                     @endif
                                     <div
-                                        class="font-semibold text-slate-800 text-base mb-1 line-clamp-2 group-hover:text-brand-700 transition-colors">
+                                        class="font-semibold text-base mb-1 line-clamp-2 transition-colors {{ $doc->status === 'cancelled' ? 'text-red-400 line-through' : 'text-slate-800 group-hover:text-brand-700' }}">
                                         {{ $doc->title }}
                                     </div>
                                     @if($doc->attachments->count() > 0)
@@ -199,12 +199,14 @@
                                             'draft' => 'bg-slate-100 text-slate-600 border border-slate-200',
                                             'active' => 'bg-brand-50 text-brand-600 border border-brand-100',
                                             'closed' => 'bg-emerald-50 text-emerald-600 border border-emerald-100',
+                                            'cancelled' => 'bg-red-50 text-red-600 border border-red-200',
                                             default => 'bg-slate-100 text-slate-600'
                                         };
                                         $statusText = match ($doc->status) {
                                             'draft' => 'ฉบับร่าง',
                                             'active' => 'กำลังดำเนินการ',
                                             'closed' => 'ดำเนินการเสร็จสิ้น',
+                                            'cancelled' => 'ยกเลิกการส่ง',
                                             default => $doc->status
                                         };
                                     @endphp
@@ -214,6 +216,8 @@
                                             <i class="fa-solid fa-circle-check"></i>
                                         @elseif($doc->status == 'active')
                                             <span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
+                                        @elseif($doc->status == 'cancelled')
+                                            <i class="fa-solid fa-ban text-red-500"></i>
                                         @else
                                             <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                                         @endif
