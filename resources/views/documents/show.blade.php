@@ -84,6 +84,16 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div
+                class="mb-6 p-4 bg-red-50 text-red-700 rounded-xl border border-red-100 flex items-center gap-3 shadow-sm animate-fade-in-down">
+                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-exclamation-triangle"></i>
+                </div>
+                <span class="font-medium">{{ session('error') }}</span>
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
 
             <!-- Left Panel: Document Details (8 Cols) -->
@@ -272,6 +282,7 @@
                                             'send' => 'border-brand-200 bg-brand-50',
                                             'close' => 'border-slate-600 bg-slate-700',
                                             'comment' => 'border-orange-200 bg-orange-50',
+                                            'cancel_send' => 'border-red-200 bg-red-50',
                                             default => 'border-slate-200 bg-slate-100'
                                         },
                                     default => 'border-slate-200 bg-slate-100'
@@ -287,6 +298,7 @@
                                                                             'send' => 'text-brand-600',
                                                                             'close' => 'text-white',
                                                                             'comment' => 'text-orange-600',
+                                                                            'cancel_send' => 'text-red-600',
                                                                             default => 'text-slate-500'
                                                                         },
                                                                     default => 'text-slate-500'
@@ -310,6 +322,7 @@
                                             'close' => 'ปิดเรื่อง',
                                             'comment' => 'ลงรับเรื่อง',
                                             'receive' => 'ลงรับเอกสาร',
+                                            'cancel_send' => 'ยกเลิกการส่ง',
                                             default => $item->action
                                         },
                                     default => $item->type
@@ -362,6 +375,30 @@
                                 class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-check"></i> ปิดเรื่อง / อนุมัติ
                             </button>
+
+                            {{-- ปุ่มยกเลิกการส่ง: แสดงเฉพาะเจ้าของเอกสาร + สถานะ active + ยังไม่มีคนรับ --}}
+                            @php
+                                $canCancelSend = $document->status === 'active'
+                                    && $document->user_id === auth()->id()
+                                    && !$document->routes->where('action', 'receive')
+                                        ->where('from_user_id', '!=', auth()->id())->count()
+                                    && !$document->routes->where('action', 'comment')
+                                        ->where('from_user_id', '!=', auth()->id())->count();
+                            @endphp
+
+                            @if($canCancelSend)
+                                <div class="pt-3 mt-3 border-t border-slate-100">
+                                    <form action="{{ route('documents.cancelSend', $document) }}" method="POST"
+                                        onsubmit="return confirm('คุณต้องการยกเลิกการส่งเอกสารนี้ใช่หรือไม่?\n\nเอกสารจะกลับเป็นสถานะ \'ฉบับร่าง\' และรายการส่งทั้งหมดจะถูกลบ')">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full py-2.5 px-4 bg-white border-2 border-red-200 hover:bg-red-50 hover:border-red-300 text-red-600 rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                                            <i class="fa-solid fa-rotate-left"></i> ยกเลิกการส่ง
+                                        </button>
+                                    </form>
+                                    <p class="text-xs text-slate-400 mt-2 text-center">เอกสารจะกลับเป็น "ฉบับร่าง"</p>
+                                </div>
+                            @endif
                         </div>
                     @else
                         <div class="text-center">
@@ -455,6 +492,7 @@
                                         'send' => 'bg-brand-500 text-white',
                                         'close' => 'bg-slate-700 text-white',
                                         'comment' => 'bg-orange-400 text-white',
+                                        'cancel_send' => 'bg-red-500 text-white',
                                         default => 'bg-slate-400 text-white'
                                     } }}">
                                                                     <i class="{{ match ($route->action) {
@@ -462,6 +500,7 @@
                                         'send' => 'fa-solid fa-share',
                                         'close' => 'fa-solid fa-flag-checkered',
                                         'comment' => 'fa-solid fa-file-import',
+                                        'cancel_send' => 'fa-solid fa-rotate-left',
                                         default => 'fa-solid fa-circle'
                                     } }} text-[10px]"></i>
                                                                 </div>
@@ -481,6 +520,7 @@
                                         'close' => 'ปิดเรื่อง / อนุมัติ',
                                         'comment' => 'ลงรับ / รับทราบ',
                                         'receive' => 'ลงรับเอกสาร',
+                                        'cancel_send' => 'ยกเลิกการส่ง',
                                         default => $route->action
                                     } }}
                                                                         </span>

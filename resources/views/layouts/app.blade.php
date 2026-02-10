@@ -17,10 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 
-    <!-- Scripts & Styles -->
-    <!-- Scripts & Styles (Manual Load for Shared Host) -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-CvCtKZtt.css') }}">
-    <script type="module" src="{{ asset('build/assets/app-C-ECAwdr.js') }}"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>

@@ -11,9 +11,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- CSS & JS Assets (Manual Load for Shared Host) -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-CvCtKZtt.css') }}">
-    <script type="module" src="{{ asset('build/assets/app-C-ECAwdr.js') }}"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .glass-panel {
             background: rgba(255, 255, 255, 0.7);

@@ -221,12 +221,40 @@
                                     </span>
                                 </td>
 
-                                <!-- Col 6: Arrow Icon -->
+                                <!-- Col 6: Actions / Arrow Icon -->
                                 <td class="px-6 py-4 text-center">
-                                    <div
-                                        class="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 group-hover:text-brand-600 group-hover:bg-brand-50 transition-all">
-                                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                                    </div>
+                                    @if($tab == 'outbox')
+                                        @php
+                                            $canCancelSendInList = $doc->status === 'active'
+                                                && $doc->user_id === auth()->id()
+                                                && !$doc->routes->where('action', 'receive')
+                                                    ->where('from_user_id', '!=', auth()->id())->count()
+                                                && !$doc->routes->where('action', 'comment')
+                                                    ->where('from_user_id', '!=', auth()->id())->count();
+                                        @endphp
+                                        @if($canCancelSendInList)
+                                            <form action="{{ route('documents.cancelSend', $doc) }}" method="POST"
+                                                onclick="event.stopPropagation()"
+                                                onsubmit="return confirm('ยกเลิกการส่งเอกสาร {{ $doc->document_no }} ?')">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all"
+                                                    title="ยกเลิกการส่ง">
+                                                    <i class="fa-solid fa-rotate-left text-[10px]"></i> ยกเลิก
+                                                </button>
+                                            </form>
+                                        @else
+                                            <div
+                                                class="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 group-hover:text-brand-600 group-hover:bg-brand-50 transition-all">
+                                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div
+                                            class="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 group-hover:text-brand-600 group-hover:bg-brand-50 transition-all">
+                                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

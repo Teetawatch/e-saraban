@@ -137,6 +137,9 @@ Route::middleware(['auth'])->group(function () {
     // Route สำหรับ Process (ส่งต่อ/ปิดเรื่อง)
     Route::post('documents/{document}/process', [DocumentController::class, 'process'])->name('documents.process');
 
+    // Route สำหรับยกเลิกการส่ง (Cancel Send)
+    Route::post('documents/{document}/cancel-send', [DocumentController::class, 'cancelSend'])->name('documents.cancelSend');
+
     // Route สำหรับดาวน์โหลดไฟล์แนบ (Secure Download & Audit Log)
     Route::get('documents/attachments/{attachment}/download', [DocumentController::class, 'download'])->name('documents.download');
     

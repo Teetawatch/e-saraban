@@ -406,6 +406,64 @@ class DocumentController extends Controller
     }
 
     /**
+     * ยกเลิกการส่งเอกสาร (Cancel Send)
+     * เงื่อนไข: 1. ต้องเป็นเจ้าของเอกสาร  2. ยังไม่มีคนกดรับ
+     */
+    public function cancelSend(Document $document): RedirectResponse
+    {
+        $user = auth()->user();
+
+        // เงื่อนไข 1: ต้องเป็นผู้สร้างเอกสาร
+        if ($document->user_id !== $user->id) {
+            return back()->with('error', 'คุณไม่มีสิทธิ์ยกเลิกการส่งเอกสารนี้ เนื่องจากคุณไม่ใช่ผู้สร้างเอกสาร');
+        }
+
+        // เงื่อนไข 2: ตรวจสอบว่ายังไม่มีคนกดรับเอกสาร
+        // เช็คจาก document_routes ว่ามี action = 'receive' หรือ 'comment' จากผู้อื่น (ไม่ใช่เจ้าของเอกสาร) หรือไม่
+        $hasBeenReceived = $document->routes()
+            ->where('from_user_id', '!=', $user->id)
+            ->whereIn('action', ['receive', 'comment'])
+            ->exists();
+
+        if ($hasBeenReceived) {
+            return back()->with('error', 'ไม่สามารถยกเลิกได้ เนื่องจากมีผู้รับเอกสารนี้แล้ว');
+        }
+
+        // เช็คว่าเอกสารต้องอยู่ในสถานะ active (ส่งแล้ว) เท่านั้น
+        if ($document->status !== 'active') {
+            return back()->with('error', 'ไม่สามารถยกเลิกได้ เนื่องจากเอกสารไม่ได้อยู่ในสถานะที่ส่งแล้ว');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // ลบ Routes ที่เป็น action 'send' ทั้งหมด
+            $document->routes()->where('action', 'send')->delete();
+
+            // เปลี่ยนสถานะกลับเป็น draft
+            $document->update(['status' => 'draft']);
+
+            // บันทึก Route การยกเลิก
+            $document->routes()->create([
+                'from_user_id' => $user->id,
+                'action' => 'cancel_send',
+                'note' => 'ยกเลิกการส่งเอกสาร',
+            ]);
+
+            // [LOG]
+            AuditLogger::log('cancel_send', 'document', $document->document_no, 'ยกเลิกการส่งเอกสาร: ' . $document->title);
+
+            DB::commit();
+
+            return back()->with('success', 'ยกเลิกการส่งเอกสารเรียบร้อยแล้ว เอกสารกลับเป็นสถานะ "ฉบับร่าง"');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * ดาวน์โหลดไฟล์แนบ (Secure Download)
      */
     public function download(DocumentAttachment $attachment)
