@@ -82,13 +82,13 @@
                         <!-- Readonly Fields -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">หน่วยงาน</label>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">หน่วยงาน</label>
                                 <div class="bg-slate-100 border border-slate-200 text-slate-600 text-sm rounded-xl p-2.5">
                                     {{ $user->department->name ?? '-' }}
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">สิทธิ์การใช้งาน</label>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">สิทธิ์การใช้งาน</label>
                                 <div class="bg-slate-100 border border-slate-200 text-slate-600 text-sm rounded-xl p-2.5">
                                     {{ $user->roles->first()->label ?? '-' }}
                                 </div>

@@ -6,7 +6,7 @@
         <!-- Page Header & Actions -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
+                <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
                     @if($tab == 'outbox')
                         <div
                             class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center shadow-sm">

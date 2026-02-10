@@ -6,7 +6,7 @@
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
+            <h1 class="text-2xl font-bold text-slate-800">
                 <i class="fa-solid fa-magnifying-glass mr-2 text-primary-600"></i>ค้นหาเอกสารขั้นสูง
             </h1>
             <p class="text-slate-500 text-sm mt-1">ค้นหาและกรองข้อมูลเอกสารตามเงื่อนไขที่ต้องการ</p>
@@ -32,7 +32,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-12 gap-4">
                     <!-- Keyword (Span 3 on XL) -->
                     <div class="xl:col-span-3">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">คำค้นหา</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">คำค้นหา</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -45,13 +45,13 @@
 
                     <!-- Date Range (Span 3 on XL -> 1.5 each visually, but effectively 2 slots here? Let's use 2 separate fields) -->
                     <div class="xl:col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">ตั้งแต่วันที่</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">ตั้งแต่วันที่</label>
                         <div class="relative">
                             <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-xl focus:ring-2 focus:ring-brand-100 focus:border-brand-500 p-2.5 transition-all">
                         </div>
                     </div>
                     <div class="xl:col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">ถึงวันที่</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">ถึงวันที่</label>
                         <div class="relative">
                             <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-xl focus:ring-2 focus:ring-brand-100 focus:border-brand-500 p-2.5 transition-all">
                         </div>
@@ -59,7 +59,7 @@
 
                     <!-- Department (Span 2 on XL) -->
                     <div class="xl:col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">หน่วยงาน</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">หน่วยงาน</label>
                         <select name="department_id" class="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-xl focus:ring-2 focus:ring-brand-100 focus:border-brand-500 p-2.5 transition-all cursor-pointer">
                             <option value="">ทั้งหมด</option>
                             @foreach($departments as $dept)
@@ -73,7 +73,7 @@
                          We have Type (1.5), Urgency (1.5).
                     -->
                     <div class="xl:col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">ประเภท</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">ประเภท</label>
                         <select name="document_type_id" class="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-xl focus:ring-2 focus:ring-brand-100 focus:border-brand-500 p-2.5 transition-all cursor-pointer">
                             <option value="">ทั้งหมด</option>
                             @foreach($documentTypes as $type)
@@ -83,7 +83,7 @@
                     </div>
 
                     <div class="xl:col-span-1">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">ความเร่งด่วน</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">ความเร่งด่วน</label>
                         <select name="urgency_level_id" class="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-xl focus:ring-2 focus:ring-brand-100 focus:border-brand-500 p-2.5 transition-all cursor-pointer">
                             <option value="">ทั้งหมด</option>
                             @foreach($urgencyLevels as $urgency)

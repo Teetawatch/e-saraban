@@ -6,7 +6,7 @@
         <!-- Page Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
+                <h1 class="text-2xl font-bold text-slate-800">
                     @if($direction === 'inbound')
                         <i class="fa-solid fa-inbox mr-2 text-emerald-600"></i>ลงทะเบียนหนังสือเข้า
                     @else
@@ -63,7 +63,7 @@
                                             @endif
                                         </span>
                                         <span
-                                            class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase tracking-wider">Auto-Gen</span>
+                                            class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase">Auto-Gen</span>
                                     </div>
                                     <p class="text-xs text-slate-400 mt-2 ml-1">
                                         @if($direction === 'inbound')

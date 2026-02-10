@@ -6,7 +6,7 @@
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
+            <h1 class="text-2xl font-bold text-slate-800">
                 <i class="fa-solid fa-users-gear mr-2 text-primary-600"></i>จัดการผู้ใช้งาน
             </h1>
             <p class="text-slate-500 text-sm mt-1">รายชื่อบุคลากรและกำหนดสิทธิ์การใช้งานระบบ</p>

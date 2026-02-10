@@ -7,10 +7,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>ระบบสารบรรณอิเล็กทรอนิกส์ รร.พธ.พธ.ทร.</title>
 
-    <!-- Fonts -->
+    <!-- Fonts: Kanit (หัวข้อ) + Sarabun (เนื้อหา) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -19,15 +19,11 @@
 
     <!-- Scripts & Styles -->
     <!-- Scripts & Styles (Manual Load for Shared Host) -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-BILHC7h_.css') }}">
-    <script type="module" src="{{ asset('build/assets/app-kGY04szw.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('build/assets/app-CvCtKZtt.css') }}">
+    <script type="module" src="{{ asset('build/assets/app-C-ECAwdr.js') }}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-        }
-
         [x-cloak] {
             display: none !important;
         }
@@ -63,7 +59,7 @@
 
             <!-- Menu Items -->
             <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar">
-                <p class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-2">เมนูหลัก</p>
+                <p class="px-3 text-[10px] font-bold text-slate-400 uppercase mb-2 mt-2">เมนูหลัก</p>
 
                 <a href="{{ route('dashboard') }}"
                     class="{{ request()->routeIs('dashboard') ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-50 hover:text-brand-700' }} flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-200 group">
@@ -106,7 +102,7 @@
 
                 <!-- Admin Menu -->
                 @if(Auth::user() && Auth::user()->hasRole('admin'))
-                    <p class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6">จัดการระบบ</p>
+                    <p class="px-3 text-[10px] font-bold text-slate-400 uppercase mb-2 mt-6">จัดการระบบ</p>
 
                     <a href="{{ route('admin.reports.index') }}"
                         class="{{ request()->routeIs('admin.reports.index') ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-50 hover:text-brand-700' }} flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-200 group">

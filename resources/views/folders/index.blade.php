@@ -4,7 +4,7 @@
 <div class="w-full px-4 sm:px-6 lg:px-8 py-8" x-data="{ openModal: false }">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
+            <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm">
                     <i class="fa-solid fa-folder-tree text-lg"></i>
                 </div>

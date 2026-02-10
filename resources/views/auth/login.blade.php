@@ -5,24 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>เข้าสู่ระบบ - e-Saraban</title>
-    <!-- Google Fonts: Kanit & Inter -->
+    <!-- Google Fonts: Kanit (หัวข้อ) & Sarabun (เนื้อหา) -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@200;300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- CSS & JS Assets (Manual Load for Shared Host) -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-BILHC7h_.css') }}">
-    <script type="module" src="{{ asset('build/assets/app-kGY04szw.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('build/assets/app-CvCtKZtt.css') }}">
+    <script type="module" src="{{ asset('build/assets/app-C-ECAwdr.js') }}"></script>
     <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-        }
-
-        .font-inter {
-            font-family: 'Inter', sans-serif;
-        }
-
         .glass-panel {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
@@ -91,7 +83,7 @@
                     <i class="fa-solid fa-folder-tree text-5xl text-white drop-shadow-lg"></i>
                 </div>
 
-                <h1 class="text-5xl font-black text-white mb-6 tracking-tight leading-tight drop-shadow-sm">
+                <h1 class="text-5xl font-black text-white mb-6 leading-tight drop-shadow-sm">
                     ระบบสารบรรณอิเล็กทรอนิกส์
                 </h1>
 
@@ -119,7 +111,7 @@
 
             <!-- Footer Credit -->
             <div class="absolute bottom-6 left-0 w-full text-center">
-                <p class="text-brand-200/40 text-xs font-inter uppercase tracking-widest">Secure • Modern • Reliable</p>
+                <p class="text-brand-200/40 text-xs uppercase">Secure • Modern • Reliable</p>
             </div>
         </div>
 

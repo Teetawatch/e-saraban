@@ -70,7 +70,7 @@
             <i class="fa-solid fa-chevron-right text-xs mx-3 text-slate-300"></i>
             <a href="{{ route('documents.index') }}" class="hover:text-brand-600 transition-colors">หนังสือราชการ</a>
             <i class="fa-solid fa-chevron-right text-xs mx-3 text-slate-300"></i>
-            <span class="text-slate-800 font-medium tracking-wide">รายละเอียด</span>
+            <span class="text-slate-800 font-medium">รายละเอียด</span>
         </nav>
 
         <!-- Success Alert -->
@@ -101,7 +101,7 @@
                         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                             <div class="flex items-center gap-3">
                                 <span
-                                    class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-mono font-bold tracking-wider border border-slate-200">
+                                    class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-mono font-bold border border-slate-200">
                                     {{ $document->document_no }}
                                 </span>
                                 <span class="px-2 py-1 rounded text-xs font-bold border"
@@ -167,21 +167,21 @@
                     <div
                         class="bg-slate-50/50 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 divide-x divide-slate-100">
                         <div class="p-4 text-center">
-                            <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">ประเภท</p>
+                            <p class="text-xs text-slate-400 uppercase mb-1">ประเภท</p>
                             <p class="font-medium text-slate-700">{{ $document->type->name }}</p>
                         </div>
                         <div class="p-4 text-center">
-                            <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">ลงวันที่</p>
+                            <p class="text-xs text-slate-400 uppercase mb-1">ลงวันที่</p>
                             <p class="font-medium text-slate-700">
                                 {{ \Carbon\Carbon::parse($document->document_date)->toThaiDate() }}</p>
                         </div>
                         <div class="p-4 text-center">
-                            <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">อัปโหลดเมื่อ</p>
+                            <p class="text-xs text-slate-400 uppercase mb-1">อัปโหลดเมื่อ</p>
                             <p class="font-medium text-slate-700">
                                 {{ \Carbon\Carbon::parse($document->created_at)->locale('th')->diffForHumans() }}</p>
                         </div>
                         <div class="p-4 text-center">
-                            <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">ไฟล์แนบ</p>
+                            <p class="text-xs text-slate-400 uppercase mb-1">ไฟล์แนบ</p>
                             <p class="font-medium text-brand-600">{{ $document->attachments->count() }} ไฟล์</p>
                         </div>
                     </div>
@@ -386,7 +386,7 @@
                                                 <i class="fa-solid fa-folder-closed"></i>
                                             </div>
                                             <div>
-                                                <p class="text-xs text-indigo-500 font-bold uppercase tracking-wider mb-0.5">
+                                                <p class="text-xs text-indigo-500 font-bold uppercase mb-0.5">
                                                     ถูกจัดเก็บในแฟ้ม</p>
                                                 <a href="{{ route('folders.show', $document->folder_id) }}"
                                                     class="text-sm font-bold text-indigo-900 hover:underline line-clamp-1">{{ $document->folder->name }}</a>

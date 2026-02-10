@@ -1,9 +1,22 @@
-/* Import Google Font Kanit */
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600;700&display=swap');
+/* Import Google Fonts: Kanit (หัวข้อ) + Sarabun (เนื้อหา) */
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global Font Rules */
+@layer base {
+    /* หัวข้อทุกระดับใช้ Kanit */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Kanit', 'Sarabun', sans-serif;
+    }
+
+    /* Reset letter-spacing ทั้งระบบ */
+    * {
+        letter-spacing: 0;
+    }
+}
 
 /* Custom Scrollbar เพื่อความสวยงาม (Webkit) */
 ::-webkit-scrollbar {

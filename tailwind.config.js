@@ -11,8 +11,10 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                // บังคับใช้ Kanit เป็นฟอนต์หลักทั้งระบบ
-                sans: ['Kanit', ...defaultTheme.fontFamily.sans],
+                // Sarabun เป็นฟอนต์เนื้อหาหลักทั้งระบบ
+                sans: ['Sarabun', ...defaultTheme.fontFamily.sans],
+                // Kanit เป็นฟอนต์หัวข้อ
+                heading: ['Kanit', 'Sarabun', ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 // กำหนดสีธีมหลัก (ตัวอย่าง: สีน้ำเงินกรมท่าแบบสมัยใหม่)

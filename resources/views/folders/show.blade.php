@@ -9,7 +9,7 @@
         </a>
         <div>
             <div class="flex items-center gap-3">
-                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">{{ $folder->name }}</h1>
+                <h1 class="text-2xl font-bold text-slate-800">{{ $folder->name }}</h1>
                 <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold">{{ $folder->year }}</span>
             </div>
             <p class="text-slate-500 text-sm mt-1">{{ $folder->description ?? 'ไม่มีคำอธิบาย' }}</p>

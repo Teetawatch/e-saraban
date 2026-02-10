@@ -33,18 +33,18 @@
                                 class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        <span class="text-sm font-bold text-slate-600 tracking-wide">
+                        <span class="text-sm font-bold text-slate-600">
                             {{ \Carbon\Carbon::now()->setTimezone('Asia/Bangkok')->locale('th')->addYears(543)->translatedFormat('j F Y H:i') }}
                             น.
                         </span>
                     </div>
 
                     <h1
-                        class="text-xl md:text-5xl lg:text-5xl font-black text-slate-800 mb-6 leading-tight tracking-tight drop-shadow-sm">
+                        class="text-xl md:text-5xl lg:text-5xl font-black text-slate-800 mb-6 leading-tight drop-shadow-sm">
                         สวัสดีคุณ <span
                             class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-sky-600">{{ Auth::user()->name }}</span>
                         <span
-                            class="block text-xl md:text-xl font-light text-slate-500 mt-3 tracking-normal">ขอให้วันนี้เป็นวันที่ยอดเยี่ยม!</span>
+                            class="block text-xl md:text-xl font-light text-slate-500 mt-3">ขอให้วันนี้เป็นวันที่ยอดเยี่ยม!</span>
                     </h1>
 
                     <!-- Stats in Banner (Light) -->
@@ -56,7 +56,7 @@
                                 <i class="fa-solid fa-inbox text-lg"></i>
                             </div>
                             <div class="text-left">
-                                <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">รอรับ</p>
+                                <p class="text-[10px] text-slate-500 uppercase font-bold">รอรับ</p>
                                 <p class="text-xl font-bold text-slate-800 leading-none">{{ $incomingDocuments->count() }}
                                 </p>
                             </div>
@@ -69,7 +69,7 @@
                                 <i class="fa-solid fa-bolt text-lg"></i>
                             </div>
                             <div class="text-left">
-                                <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">เร่งด่วน</p>
+                                <p class="text-[10px] text-slate-500 uppercase font-bold">เร่งด่วน</p>
                                 <p class="text-xl font-bold text-slate-800 leading-none">{{ $urgentCount ?? 0 }}</p>
                             </div>
                         </div>
@@ -89,9 +89,9 @@
                             <i class="fa-solid fa-plus"></i>
                         </div>
                         <div class="relative flex flex-col items-start z-10">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">เมนูลัด</span>
+                            <span class="text-xs font-bold text-slate-400 uppercase mb-1">เมนูลัด</span>
                             <span
-                                class="text-2xl font-bold text-slate-800 group-hover:text-brand-600 transition-colors tracking-tight">สร้างหนังสือ</span>
+                                class="text-2xl font-bold text-slate-800 group-hover:text-brand-600 transition-colors">สร้างหนังสือ</span>
                         </div>
                     </a>
                 </div>
@@ -222,7 +222,7 @@
                                     class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                             </div>
-                            <h3 class="font-bold text-slate-800 text-xl tracking-tight">งานรอการดำเนินการ (เมื่อทุกแผนกลงรับ
+                            <h3 class="font-bold text-slate-800 text-xl">งานรอการดำเนินการ (เมื่อทุกแผนกลงรับ
                                 การแจ้งเตือนจะหายไป)</h3>
                             <span
                                 class="bg-red-100 text-red-600 text-xs font-bold px-2.5 py-0.5 rounded-full border border-red-200">
