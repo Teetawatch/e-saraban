@@ -363,17 +363,32 @@ class DocumentController extends Controller
                 $routeData['receive_no'] = $receiveNo;
                 $routeData['receive_date'] = now();
 
-                // บันทึกว่ารับมาจากใคร (เอา Route ล่าสุดที่ส่งมาหาเรา)
-                // แต่ใน baseRouteData เราใส่ from_user_id เป็นตัวเราเอง (คนกดรับ)
-                // ซึ่งถูกต้องแล้ว เพราะ Action 'receive' คือ "ฉันได้รับแล้ว"
-
                 $document->routes()->create($routeData);
 
-                // อัปเดตสถานะเอกสารเป็น Received (เฉพาะถ้ามันยังเป็น Active)
-                // แต่จริงๆ status ของ Document เป็น Global... ถ้าคนนึงรับ อีกคนยังไม่รับ จะทำไง?
-                // Status 'received' อาจจะหมายถึง "มีการรับแล้วอย่างน้อย 1 คน" หรือไม่ก็ไม่ต้องเปลี่ยน Status หลัก
-                // แต่ถ้าตาม Flow ปกติ รับแล้วก็คือรับ
-                // $document->update(['status' => 'received']); 
+                // ตรวจสอบว่าผู้รับทุกคน/หน่วยงานที่ส่งไปให้ ได้ลงรับครบหมดแล้วหรือยัง
+                // ถ้าครบ → อัปเดตสถานะเป็น 'closed' (ดำเนินการเสร็จสิ้น)
+                $document->load('routes.fromUser'); // Reload routes หลังจากสร้างใหม่
+
+                $sendRoutes = $document->routes->where('action', 'send');
+                $receiveRoutes = $document->routes->where('action', 'receive');
+
+                // นับจำนวนผู้รับที่ต้องรับ (แยกตาม user กับ department)
+                $sentToUsers = $sendRoutes->whereNotNull('to_user_id')->pluck('to_user_id')->unique();
+                $sentToDepts = $sendRoutes->whereNotNull('to_department_id')->pluck('to_department_id')->unique();
+
+                // นับจำนวนที่รับแล้ว (ใช้ department ของผู้ที่กดรับ)
+                $receivedByUsers = $receiveRoutes->pluck('from_user_id')->unique();
+                $receivedByDepts = $receiveRoutes->map(function ($r) {
+                    return $r->fromUser?->department_id;
+                })->filter()->unique();
+
+                // ตรวจสอบว่าครบหมดแล้วหรือยัง
+                $allUsersReceived = $sentToUsers->isEmpty() || $sentToUsers->diff($receivedByUsers)->isEmpty();
+                $allDeptsReceived = $sentToDepts->isEmpty() || $sentToDepts->diff($receivedByDepts)->isEmpty();
+
+                if ($allUsersReceived && $allDeptsReceived && $sendRoutes->isNotEmpty()) {
+                    $document->update(['status' => 'closed']);
+                }
             }
             // กรณีอื่นๆ (Comment, Approve)
             else {
