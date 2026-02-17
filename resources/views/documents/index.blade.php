@@ -49,15 +49,17 @@
 
         /* Document row hover effect */
         .doc-row {
-            position: relative;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .doc-row::before {
+        .doc-row td:first-child {
+            position: relative;
+        }
+        .doc-row td:first-child::before {
             content: '';
             position: absolute;
             left: 0;
-            top: 0;
-            bottom: 0;
+            top: 4px;
+            bottom: 4px;
             width: 3px;
             border-radius: 0 4px 4px 0;
             background: linear-gradient(180deg, #6366f1, #06b6d4);
@@ -67,9 +69,8 @@
         }
         .doc-row:hover {
             background: linear-gradient(90deg, #f8fafc 0%, #eef2ff 40%, #f0f9ff 100%);
-            transform: translateX(2px);
         }
-        .doc-row:hover::before {
+        .doc-row:hover td:first-child::before {
             opacity: 1;
             transform: scaleY(1);
         }
@@ -143,13 +144,90 @@
             background-clip: text;
         }
 
-        /* Pagination styling */
+        /* Pagination Premium Styling */
+        /* Hide Laravel's default "Showing X to Y of Z results" text - we have our own */
         .pagination-premium nav > div:first-child { display: none; }
-        .pagination-premium .relative.inline-flex {
-            border-radius: 0.75rem;
-            font-weight: 600;
-            font-size: 0.8rem;
-            transition: all 0.2s;
+        .pagination-premium nav > div.hidden { display: flex !important; }
+        /* Hide the default text info inside the nav */
+        .pagination-premium nav > div > div:first-child { display: none; }
+        /* The button container */
+        .pagination-premium nav > div > div:last-child > span {
+            display: inline-flex;
+            gap: 4px;
+            border-radius: 1rem;
+            box-shadow: none;
+            background: transparent;
+            align-items: center;
+        }
+        /* All pagination items (links, spans, current) */
+        .pagination-premium nav span > span > span,
+        .pagination-premium nav span > a,
+        .pagination-premium nav span > span[aria-disabled] > span,
+        .pagination-premium nav span > span[aria-current] > span {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            padding: 0 10px !important;
+            margin: 0 !important;
+            border-radius: 10px !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            line-height: 1 !important;
+            border: 1px solid #e2e8f0 !important;
+            background: white !important;
+            color: #475569 !important;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+            text-decoration: none !important;
+        }
+        /* Hover state */
+        .pagination-premium nav span > a:hover {
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff) !important;
+            border-color: #a5b4fc !important;
+            color: #4f46e5 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.15) !important;
+        }
+        /* Active / Current page */
+        .pagination-premium nav span > span[aria-current] > span {
+            background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+            color: white !important;
+            border-color: #4f46e5 !important;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.35) !important;
+            cursor: default;
+        }
+        /* Disabled state (prev/next when on first/last page) */
+        .pagination-premium nav span > span[aria-disabled] > span {
+            opacity: 0.4 !important;
+            cursor: not-allowed !important;
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: none !important;
+        }
+        /* Three dots separator */
+        .pagination-premium nav span > span[aria-disabled]:not([aria-label]) > span {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            min-width: 28px;
+            opacity: 0.6 !important;
+            color: #94a3b8 !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 2px;
+        }
+        /* SVG arrows */
+        .pagination-premium svg {
+            width: 16px;
+            height: 16px;
+        }
+        /* Mobile pagination */
+        .pagination-premium nav > div:first-child { display: none !important; }
+        .pagination-premium nav > div.hidden.sm\:flex-1 {
+            display: flex !important;
+            justify-content: center;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -324,40 +402,40 @@
                 {{-- 3. DATA TABLE --}}
                 {{-- ============================================================ --}}
                 <div class="overflow-x-auto custom-scroll">
-                    <table class="w-full text-sm text-left table-fixed" aria-label="รายการเอกสาร">
+                    <table class="w-full text-sm text-left" aria-label="รายการเอกสาร">
                         <thead>
                             <tr class="border-b border-slate-100">
-                                <th scope="col" class="px-5 md:px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider" style="width: 180px;">
+                                <th scope="col" class="px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider whitespace-nowrap" style="width: 15%;">
                                     <div class="flex items-center gap-1.5">
                                         <i class="fa-solid fa-hashtag text-[9px] text-slate-300"></i>
                                         เลขที่ / วันที่
                                     </div>
                                 </th>
-                                <th scope="col" class="px-5 md:px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider whitespace-nowrap">
                                     <div class="flex items-center gap-1.5">
                                         <i class="fa-solid fa-file-lines text-[9px] text-slate-300"></i>
                                         เรื่อง
                                     </div>
                                 </th>
-                                <th scope="col" class="px-5 md:px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider" style="width: 160px;">
+                                <th scope="col" class="px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider whitespace-nowrap" style="width: 14%;">
                                     <div class="flex items-center gap-1.5">
                                         <i class="fa-solid fa-tag text-[9px] text-slate-300"></i>
                                         ประเภท / ความด่วน
                                     </div>
                                 </th>
-                                <th scope="col" class="px-5 md:px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider" style="width: 200px;">
+                                <th scope="col" class="px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider whitespace-nowrap" style="width: 16%;">
                                     <div class="flex items-center gap-1.5">
                                         <i class="fa-solid fa-user text-[9px] text-slate-300"></i>
                                         ผู้ดำเนินการ
                                     </div>
                                 </th>
-                                <th scope="col" class="px-5 md:px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider text-right" style="width: 180px;">
+                                <th scope="col" class="px-6 py-4 text-[11px] text-slate-400 font-semibold uppercase tracking-wider text-right whitespace-nowrap" style="width: 15%;">
                                     <div class="flex items-center justify-end gap-1.5">
                                         <i class="fa-solid fa-signal text-[9px] text-slate-300"></i>
                                         สถานะ
                                     </div>
                                 </th>
-                                <th scope="col" class="px-4 py-4" style="width: 60px;"></th>
+                                <th scope="col" class="px-4 py-4" style="width: 5%;"></th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -366,7 +444,7 @@
                                     onclick="window.location='{{ route('documents.show', $doc) }}'">
 
                                     {{-- Col 1: Document No & Date --}}
-                                    <td class="px-5 md:px-6 py-4">
+                                    <td class="px-6 py-4">
                                         <div class="flex flex-col">
                                             @php
                                                 $receiveNo = null;
@@ -409,7 +487,7 @@
                                     </td>
 
                                     {{-- Col 2: Title & Attachments --}}
-                                    <td class="px-5 md:px-6 py-4">
+                                    <td class="px-6 py-4">
                                         @if($doc->urgency->name !== 'ปกติ')
                                             <div class="mb-1.5">
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border shadow-sm"
@@ -430,7 +508,7 @@
                                     </td>
 
                                     {{-- Col 3: Type --}}
-                                    <td class="px-5 md:px-6 py-4">
+                                    <td class="px-6 py-4">
                                         <div class="flex flex-col items-start gap-2">
                                             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-slate-50 to-white border border-slate-200/80 text-slate-600 shadow-sm">
                                                 <span class="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-400 to-blue-500 shadow-sm"></span>
@@ -440,7 +518,7 @@
                                     </td>
 
                                     {{-- Col 4: User Avatar --}}
-                                    <td class="px-5 md:px-6 py-4">
+                                    <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div class="relative">
                                                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 border border-slate-200/80 shadow-sm overflow-hidden group-hover:shadow-md group-hover:border-indigo-200/60 transition-all duration-300">
@@ -469,7 +547,7 @@
                                     </td>
 
                                     {{-- Col 5: Status Badge --}}
-                                    <td class="px-5 md:px-6 py-4 text-right">
+                                    <td class="px-6 py-4 text-right">
                                         @php
                                             $effectiveStatus = $doc->status;
 
@@ -614,10 +692,18 @@
                 {{-- 4. PAGINATION --}}
                 {{-- ============================================================ --}}
                 @if($documents->hasPages())
-                    <div class="px-5 md:px-6 py-4 border-t border-slate-100 bg-gradient-to-r from-slate-50/60 via-white to-indigo-50/20 flex flex-col sm:flex-row justify-between items-center gap-3">
-                        <div class="text-xs text-slate-400 font-medium">
-                            แสดง <span class="font-bold text-slate-600">{{ $documents->firstItem() }}-{{ $documents->lastItem() }}</span>
-                            จาก <span class="font-bold text-slate-600">{{ $documents->total() }}</span> รายการ
+                    <div class="px-6 py-5 border-t border-slate-100 bg-gradient-to-r from-slate-50/60 via-white to-indigo-50/20 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
+                            <div class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center">
+                                <i class="fa-solid fa-list-ol text-[9px] text-slate-400"></i>
+                            </div>
+                            <span>
+                                แสดง
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-white border border-slate-200 font-bold text-slate-600 shadow-sm mx-0.5">{{ $documents->firstItem() }}-{{ $documents->lastItem() }}</span>
+                                จาก
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-white border border-slate-200 font-bold text-slate-600 shadow-sm mx-0.5">{{ $documents->total() }}</span>
+                                รายการ
+                            </span>
                         </div>
                         <div class="pagination-premium">
                             {{ $documents->links() }}
