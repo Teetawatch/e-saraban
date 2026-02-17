@@ -412,6 +412,11 @@ class DocumentController extends Controller
 
             DB::commit();
 
+            // ถ้าเป็นการลงรับ → redirect ไปหน้า show ของเอกสารนั้นเลย
+            if ($request->action === 'receive') {
+                return redirect()->route('documents.show', $document)->with('success', 'ลงรับเอกสารเรียบร้อยแล้ว');
+            }
+
             return back()->with('success', 'ดำเนินการเรียบร้อยแล้ว');
 
         } catch (\Exception $e) {

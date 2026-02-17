@@ -1,406 +1,503 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="w-full px-4 sm:px-6 lg:px-8 pb-10">
+    <style>
+        /* ===== Dashboard Premium Animations ===== */
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fade-in-scale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes shimmer-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 20px 4px rgba(99, 102, 241, 0.15); }
+        }
+        .animate-fade-in-up { animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .animate-fade-in-scale { animation: fade-in-scale 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-gradient { animation: gradient-shift 6s ease infinite; background-size: 200% 200%; }
+        .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 
+        .delay-1 { animation-delay: 0.06s; }
+        .delay-2 { animation-delay: 0.12s; }
+        .delay-3 { animation-delay: 0.18s; }
+        .delay-4 { animation-delay: 0.24s; }
+        .delay-5 { animation-delay: 0.30s; }
+        .delay-6 { animation-delay: 0.36s; }
+        .delay-7 { animation-delay: 0.42s; }
+        .delay-8 { animation-delay: 0.48s; }
 
-        <!-- 1. Welcome Banner -->
-        <div
-            class="relative rounded-[2.5rem] p-8 md:p-12 mb-12 overflow-hidden shadow-2xl shadow-indigo-100/60 border border-white/60 isolate min-h-[300px] flex items-center">
-            <!-- Sophisticated Mesh Gradient Background (Light Theme) -->
-            <div class="absolute inset-0 bg-white">
-                <div class="absolute inset-0 bg-gradient-to-br from-brand-50 via-sky-50 to-white opacity-100"></div>
-                <div
-                    class="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-200/20 rounded-full blur-[100px] -mr-32 -mt-32 mix-blend-multiply animate-pulse-slow">
-                </div>
-                <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sky-200/20 rounded-full blur-[100px] -ml-20 -mb-20 mix-blend-multiply animate-pulse-slow"
-                    style="animation-delay: 2s;"></div>
-                <!-- Grain Texture (Subtle) -->
-                <div class="absolute inset-0 opacity-[0.015]"
-                    style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E');">
-                </div>
-            </div>
+        /* Stat card with colored glow on hover */
+        .stat-glow:hover {
+            transform: translateY(-4px);
+        }
+        .stat-glow {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-            <div class="relative z-10 w-full flex flex-col lg:flex-row justify-between items-center gap-10">
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1 0%, #06b6d4 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-                <!-- Left: Text Content -->
-                <div class="text-center lg:text-left max-w-2xl">
-                    <!-- Glass Badge (Light) -->
-                    <div
-                        class="inline-flex items-center gap-2.5 mb-6 px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-white/40 shadow-sm ring-1 ring-white/60 group hover:bg-white/80 transition-all cursor-default">
-                        <span class="relative flex h-2 w-2">
-                            <span
-                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <span class="text-sm font-bold text-slate-600">
-                            {{ \Carbon\Carbon::now()->setTimezone('Asia/Bangkok')->locale('th')->addYears(543)->translatedFormat('j F Y H:i') }}
-                            น.
-                        </span>
-                    </div>
+        /* Decorative orb */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
 
-                    <h1
-                        class="text-xl md:text-5xl lg:text-5xl font-black text-slate-800 mb-6 leading-tight drop-shadow-sm">
-                        สวัสดีคุณ <span
-                            class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-sky-600">{{ Auth::user()->name }}</span>
-                        <span
-                            class="block text-xl md:text-xl font-light text-slate-500 mt-3">ขอให้วันนี้เป็นวันที่ยอดเยี่ยม!</span>
-                    </h1>
+        /* Action card hover */
+        .action-card {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .action-card:hover {
+            transform: translateY(-3px);
+        }
 
-                    <!-- Stats in Banner (Light) -->
-                    <div class="flex flex-wrap justify-center lg:justify-start gap-4">
-                        <div
-                            class="group flex items-center gap-3 px-5 py-2.5 rounded-xl bg-white/60 backdrop-blur border border-white/40 shadow-sm hover:shadow-md hover:bg-white/80 transition-all cursor-default">
-                            <div
-                                class="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-inbox text-lg"></i>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-[10px] text-slate-500 uppercase font-bold">รอรับ</p>
-                                <p class="text-xl font-bold text-slate-800 leading-none">{{ $incomingDocuments->count() }}
-                                </p>
-                            </div>
-                        </div>
+        /* Pending doc shimmer */
+        .pending-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .pending-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        .pending-card:hover::before {
+            left: 100%;
+        }
+        .pending-card:hover {
+            transform: translateX(4px);
+        }
 
-                        <div
-                            class="group flex items-center gap-3 px-5 py-2.5 rounded-xl bg-white/60 backdrop-blur border border-white/40 shadow-sm hover:shadow-md hover:bg-white/80 transition-all cursor-default">
-                            <div
-                                class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-bolt text-lg"></i>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-[10px] text-slate-500 uppercase font-bold">เร่งด่วน</p>
-                                <p class="text-xl font-bold text-slate-800 leading-none">{{ $urgentCount ?? 0 }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        /* Table row */
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        .table-row:hover {
+            background: linear-gradient(90deg, #f8fafc, #eef2ff, #f8fafc);
+        }
 
-                <!-- Right: Actions -->
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <!-- Create Button (Light Theme) -->
-                    <a href="{{ route('documents.create') }}"
-                        class="group relative flex items-center gap-5 p-6 bg-white text-slate-800 rounded-[2rem] shadow-xl shadow-slate-200/50 hover:shadow-slate-200/80 hover:-translate-y-1 transition-all duration-300 min-w-[260px] overflow-hidden border border-white">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-br from-white via-slate-50 to-brand-50 opacity-100 group-hover:opacity-90 transition-opacity">
-                        </div>
-                        <div
-                            class="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-sky-600 text-white flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 ring-4 ring-brand-50">
-                            <i class="fa-solid fa-plus"></i>
-                        </div>
-                        <div class="relative flex flex-col items-start z-10">
-                            <span class="text-xs font-bold text-slate-400 uppercase mb-1">เมนูลัด</span>
-                            <span
-                                class="text-2xl font-bold text-slate-800 group-hover:text-brand-600 transition-colors">สร้างหนังสือ</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
+        /* Smooth scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-        <script>
-            function updateTime() {
-                const now = new Date();
-                const options = {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                };
-                // Convert to Thai Buddhist Year manually if needed, or rely on locale
-                // Simple locale string for now
-                const timeString = now.toLocaleDateString('th-TH', options);
-                document.getElementById('current-time').textContent = timeString + ' น.';
-            }
-            setInterval(updateTime, 1000);
-        </script>
+        /* Summary bar segments */
+        .bar-segment {
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-        <!-- Alert Success -->
-        @if(session('success'))
-            <div
-                class="mb-8 p-4 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-100 flex items-center gap-3 shadow-sm animate-fade-in-down">
-                <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <span class="font-medium">{{ session('success') }}</span>
-            </div>
-        @endif
+        @media (prefers-reduced-motion: reduce) {
+            .animate-fade-in-up, .animate-fade-in-scale, .animate-float { animation: none !important; }
+            .stat-glow:hover, .action-card:hover, .pending-card:hover { transform: none; }
+            .pending-card::before { display: none; }
+        }
+    </style>
 
-        <!-- 2. Stats Grid (Glassmorphism / Soft UI) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <!-- Inbox -->
-            <a href="{{ route('documents.index', ['tab' => 'inbox']) }}"
-                class="group relative bg-white rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 hover:border-brand-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div class="flex justify-between items-start mb-4">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform duration-300">
-                        <i class="fa-solid fa-inbox"></i>
-                    </div>
-                    <span
-                        class="bg-brand-50 text-brand-600 text-xs font-bold px-2.5 py-1 rounded-full group-hover:bg-brand-600 group-hover:text-white transition-colors">
-                        เอกสารเข้า
-                    </span>
-                </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ number_format($inboxCount) }}</h3>
-                    <p class="text-slate-500 font-medium">หนังสือเข้า</p>
-                </div>
-            </a>
+    <div class="w-full max-w-[1600px] mx-auto pb-12">
 
-            <!-- Outbox -->
-            <a href="{{ route('documents.index', ['tab' => 'outbox']) }}"
-                class="group relative bg-white rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 hover:border-emerald-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div class="flex justify-between items-start mb-4">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform duration-300">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </div>
-                    <span
-                        class="bg-emerald-50 text-emerald-600 text-xs font-bold px-2.5 py-1 rounded-full group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                        ออกสารออก
-                    </span>
-                </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ number_format($outboxCount) }}</h3>
-                    <p class="text-slate-500 font-medium">หนังสือออก</p>
-                </div>
-            </a>
+        {{-- ============================================================ --}}
+        {{-- 1. HERO WELCOME BANNER (Vibrant Gradient) --}}
+        {{-- ============================================================ --}}
+        <div class="animate-fade-in-up mb-8">
+            <div class="relative rounded-3xl overflow-hidden shadow-xl shadow-indigo-100/50 border border-white/60">
 
-            <!-- Active -->
-            <div
-                class="group relative bg-white rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 hover:border-orange-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div class="flex justify-between items-start mb-4">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform duration-300">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
-                    <span
-                        class="bg-orange-50 text-orange-600 text-xs font-bold px-2.5 py-1 rounded-full group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                        รอดำเนินการ
-                    </span>
-                </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ number_format($activeCount) }}</h3>
-                    <p class="text-slate-500 font-medium">กำลังดำเนินการ</p>
-                </div>
-            </div>
+                {{-- Gradient Background --}}
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-400 animate-gradient"></div>
 
-            <!-- Urgent -->
-            <div
-                class="group relative bg-white rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 hover:border-red-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div class="flex justify-between items-start mb-4">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform duration-300">
-                        <i class="fa-solid fa-fire"></i>
-                    </div>
-                    <span
-                        class="bg-red-50 text-red-600 text-xs font-bold px-2.5 py-1 rounded-full group-hover:bg-red-600 group-hover:text-white transition-colors">
-                        ความเร่งด่วน
-                    </span>
-                </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ number_format($urgentCount) }}</h3>
-                    <p class="text-slate-500 font-medium">เรื่องด่วนที่สุด</p>
-                </div>
-            </div>
-        </div>
+                {{-- Decorative Orbs --}}
+                <div class="orb w-[400px] h-[400px] bg-purple-400 -top-32 -right-20" style="opacity:0.2;"></div>
+                <div class="orb w-[300px] h-[300px] bg-cyan-300 -bottom-20 -left-16" style="opacity:0.2;"></div>
+                <div class="orb w-[200px] h-[200px] bg-pink-400 top-10 right-1/3" style="opacity:0.12;"></div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                {{-- Subtle pattern overlay --}}
+                <div class="absolute inset-0 opacity-[0.06]"
+                    style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;0.4&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
 
-            <!-- Left Column: Incoming & Recent (2 Cols) -->
-            <div class="xl:col-span-2 space-y-8">
+                {{-- Content --}}
+                <div class="relative z-10 px-6 md:px-10 py-8 md:py-10 flex flex-col md:flex-row items-center justify-between gap-6">
 
-                <!-- Incoming Documents -->
-                @if($incomingDocuments->count() > 0)
-                    <div class="mt-8">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="relative flex h-3 w-3">
-                                <span
-                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                            </div>
-                            <h3 class="font-bold text-slate-800 text-xl">งานรอการดำเนินการ (เมื่อทุกแผนกลงรับ
-                                การแจ้งเตือนจะหายไป)</h3>
-                            <span
-                                class="bg-red-100 text-red-600 text-xs font-bold px-2.5 py-0.5 rounded-full border border-red-200">
-                                {{ $incomingDocuments->count() }} รายการ
+                    {{-- Left: Welcome Text --}}
+                    <div class="text-center md:text-left">
+                        {{-- Live clock badge --}}
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-5 shadow-sm">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                            </span>
+                            <span id="live-clock" class="text-xs font-semibold text-white/90 tracking-wide tabular-nums">
+                                {{ \Carbon\Carbon::now()->setTimezone('Asia/Bangkok')->locale('th')->addYears(543)->translatedFormat('j F Y H:i') }} น.
                             </span>
                         </div>
 
-                        <div class="grid grid-cols-1 gap-4">
-                            @foreach($incomingDocuments as $doc)
-                                <div
-                                    class="group relative bg-white rounded-2xl p-4 md:p-5 border border-slate-200 shadow-sm hover:shadow-xl hover:border-brand-200 transition-all duration-300 overflow-hidden">
+                        <h1 class="text-2xl md:text-4xl font-bold text-white mb-2 leading-tight drop-shadow-sm">
+                            สวัสดีคุณ {{ Auth::user()->name }}
+                        </h1>
+                        <p class="text-white/75 text-sm md:text-base font-medium">
+                            {{ Auth::user()->department->name ?? 'ระบบสารบรรณอิเล็กทรอนิกส์' }} &middot; ขอให้วันนี้เป็นวันที่ยอดเยี่ยม!
+                        </p>
 
-                                    <!-- Urgency Glow & Indicator -->
-                                    @php
-                                        $urgencyColor = match ($doc->urgency->name) {
-                                            'ด่วนที่สุด' => 'red',
-                                            'ด่วนมาก' => 'orange',
-                                            'ด่วน' => 'amber', // usually yellow/amber
-                                            default => 'blue'
-                                        };
-                                        $colorClass = "bg-{$urgencyColor}-500";
-                                        $lightBg = "bg-{$urgencyColor}-50";
-                                        $textColor = "text-{$urgencyColor}-700";
-                                        $borderColor = "border-{$urgencyColor}-200";
-                                    @endphp
+                        {{-- Inline Stats (Banner) --}}
+                        <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-5">
+                            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 hover:bg-white/25 transition-all cursor-default">
+                                <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                                    <i class="fa-solid fa-inbox text-white text-sm"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-[10px] text-white/60 font-semibold uppercase">รอรับ</p>
+                                    <p class="text-lg font-bold text-white leading-none tabular-nums">{{ $incomingDocuments->count() }}</p>
+                                </div>
+                            </div>
+                            @if($urgentCount > 0)
+                            <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/25 backdrop-blur-sm border border-red-300/30 hover:bg-red-500/35 transition-all cursor-default">
+                                <div class="w-8 h-8 rounded-lg bg-red-400/30 flex items-center justify-center">
+                                    <i class="fa-solid fa-bolt text-yellow-200 text-sm"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-[10px] text-red-100/80 font-semibold uppercase">ด่วน</p>
+                                    <p class="text-lg font-bold text-white leading-none tabular-nums">{{ $urgentCount }}</p>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
 
-                                    <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $colorClass }}"></div>
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-brand-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                    {{-- Right: Create Button --}}
+                    <div class="shrink-0">
+                        <a href="{{ route('documents.create') }}"
+                            class="group flex items-center gap-4 px-6 py-4 bg-white rounded-2xl shadow-xl shadow-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                            aria-label="สร้างหนังสือใหม่">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 text-white flex items-center justify-center text-xl shadow-lg shadow-indigo-300/40 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">เมนูลัด</span>
+                                <span class="block text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors leading-tight">สร้างหนังสือ</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Alert Success --}}
+        @if(session('success'))
+            <div class="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 rounded-2xl border border-emerald-100 flex items-center gap-3 shadow-sm animate-fade-in-up" role="alert">
+                <div class="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <i class="fa-solid fa-check text-white text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">{{ session('success') }}</span>
+            </div>
+        @endif
+
+        {{-- ============================================================ --}}
+        {{-- 2. STATS CARDS (Colorful with gradients) --}}
+        {{-- ============================================================ --}}
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-8">
+
+            {{-- Inbox --}}
+            <a href="{{ route('documents.index', ['tab' => 'inbox']) }}"
+                class="stat-glow group bg-white rounded-2xl p-5 md:p-6 border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/50 cursor-pointer animate-fade-in-up delay-1"
+                aria-label="ดูหนังสือเข้าทั้งหมด {{ number_format($inboxCount) }} รายการ">
+                {{-- Decorative gradient corner --}}
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-50 via-blue-50/50 to-transparent rounded-bl-[3rem] rounded-tr-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="flex items-center justify-between mb-4 relative">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-lg shadow-lg shadow-blue-200/50 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-inbox"></i>
+                    </div>
+                    <span class="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        เอกสารเข้า
+                    </span>
+                </div>
+                <p class="text-3xl md:text-4xl font-extrabold text-slate-800 tabular-nums mb-1">{{ number_format($inboxCount) }}</p>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">หนังสือเข้า</p>
+            </a>
+
+            {{-- Outbox --}}
+            <a href="{{ route('documents.index', ['tab' => 'outbox']) }}"
+                class="stat-glow group bg-white rounded-2xl p-5 md:p-6 border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100/50 cursor-pointer animate-fade-in-up delay-2"
+                aria-label="ดูหนังสือออกทั้งหมด {{ number_format($outboxCount) }} รายการ">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald-50 via-emerald-50/50 to-transparent rounded-bl-[3rem] rounded-tr-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="flex items-center justify-between mb-4 relative">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-lg shadow-lg shadow-emerald-200/50 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                    <span class="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                        เอกสารออก
+                    </span>
+                </div>
+                <p class="text-3xl md:text-4xl font-extrabold text-slate-800 tabular-nums mb-1">{{ number_format($outboxCount) }}</p>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">หนังสือออก</p>
+            </a>
+
+            {{-- Active --}}
+            <div class="stat-glow group bg-white rounded-2xl p-5 md:p-6 border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/50 cursor-default animate-fade-in-up delay-3">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-50 via-amber-50/50 to-transparent rounded-bl-[3rem] rounded-tr-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="flex items-center justify-between mb-4 relative">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-lg shadow-lg shadow-amber-200/50 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    @if($activeCount > 0)
+                        <span class="bg-amber-50 text-amber-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-100 animate-pulse">
+                            ดำเนินการ
+                        </span>
+                    @endif
+                </div>
+                <p class="text-3xl md:text-4xl font-extrabold text-slate-800 tabular-nums mb-1">{{ number_format($activeCount) }}</p>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">กำลังดำเนินการ</p>
+            </div>
+
+            {{-- Urgent --}}
+            <div class="stat-glow group bg-white rounded-2xl p-5 md:p-6 border border-slate-100 hover:border-red-200 hover:shadow-xl hover:shadow-red-100/50 cursor-default animate-fade-in-up delay-4 {{ $urgentCount > 0 ? 'animate-pulse-glow' : '' }}">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-red-50 via-red-50/50 to-transparent rounded-bl-[3rem] rounded-tr-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="flex items-center justify-between mb-4 relative">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 text-white flex items-center justify-center text-lg shadow-lg shadow-red-200/50 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    @if($urgentCount > 0)
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                    @endif
+                </div>
+                <p class="text-3xl md:text-4xl font-extrabold text-slate-800 tabular-nums mb-1">{{ number_format($urgentCount) }}</p>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">ด่วนที่สุด</p>
+            </div>
+        </div>
+
+        {{-- ============================================================ --}}
+        {{-- 3. MAIN CONTENT AREA --}}
+        {{-- ============================================================ --}}
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            {{-- ===== LEFT COLUMN (2/3) ===== --}}
+            <div class="xl:col-span-2 space-y-6">
+
+                {{-- ======================================= --}}
+                {{-- Pending / Incoming Documents --}}
+                {{-- ======================================= --}}
+                @if($incomingDocuments->count() > 0)
+                    <div class="animate-fade-in-up delay-5">
+                        {{-- Section Card --}}
+                        <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                            {{-- Section Header --}}
+                            <div class="px-5 md:px-6 py-4 border-b border-slate-50 flex justify-between items-center bg-gradient-to-r from-red-50/60 via-white to-rose-50/40">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 text-white flex items-center justify-center text-sm shadow-md shadow-red-200/50">
+                                        <i class="fa-solid fa-bell"></i>
                                     </div>
-
-                                    <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-5 pl-2 relative">
-
-                                        <!-- Icon/Avatar Section (Hidden on small mobile, visible on MD up) -->
-                                        <div class="hidden md:flex shrink-0">
-                                            <div
-                                                class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                                                @if($doc->user->avatar)
-                                                    <img src="{{ route('storage.file', ['path' => $doc->user->avatar]) }}"
-                                                        class="w-full h-full object-cover rounded-2xl">
-                                                @else
-                                                    @if($doc->type->name == 'หนังสือภายนอก')
-                                                        <i class="fa-solid fa-cloud-arrow-down text-xl text-sky-500"></i>
-                                                    @else
-                                                        <i class="fa-solid fa-file-lines text-xl text-slate-400"></i>
-                                                    @endif
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <!-- Content Section -->
-                                        <div class="flex-1 min-w-0">
-                                            <!-- Mobile Top Row: Urgency + Date -->
-                                            <div class="flex flex-wrap items-center gap-2 mb-2">
-                                                <span
-                                                    class="px-2.5 py-0.5 rounded-md text-[10px] font-bold border shadow-sm {{ $lightBg }} {{ $textColor }} {{ $borderColor }}">
-                                                    <i class="fa-solid fa-bolt mr-1"></i>{{ $doc->urgency->name }}
-                                                </span>
-                                                <span class="text-xs font-medium text-slate-400 flex items-center gap-1">
-                                                    <i class="fa-regular fa-clock"></i>
-                                                    {{ $doc->created_at->diffForHumans() }}
-                                                </span>
-                                            </div>
-
-                                            <a href="{{ route('documents.show', $doc) }}" class="block group/link">
-                                                <h4
-                                                    class="font-bold text-slate-800 text-base md:text-lg leading-snug truncate group-hover:text-brand-600 transition-colors">
-                                                    {{ $doc->title }}
-                                                </h4>
-                                                <!-- Meta Info -->
-                                                <div
-                                                    class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-slate-500">
-                                                    <span
-                                                        class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">{{ $doc->document_no }}</span>
-                                                    <span class="hidden md:inline text-slate-300">|</span>
-                                                    <span class="flex items-center gap-1">
-                                                        <i class="fa-solid fa-building-user md:hidden text-slate-400"></i>
-                                                        จาก: <span
-                                                            class="font-medium text-slate-700">{{ $doc->department->name }}</span>
-                                                    </span>
-                                                </div>
-                                            </a>
-                                        </div>
-
-                                        <!-- Action Section (Mobile: Full width bottom bar / Desktop: Right side button) -->
-                                        <div
-                                            class="flex items-center justify-between gap-3 mt-2 pt-3 border-t border-slate-100 md:mt-0 md:pt-0 md:border-t-0 md:w-auto w-full">
-
-                                            <!-- Mobile Sender Info (Left side of action bar) -->
-                                            <div class="flex items-center gap-2 md:hidden">
-                                                <div
-                                                    class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 border border-slate-200 overflow-hidden shrink-0">
-                                                    @if($doc->user->avatar) <img
-                                                        src="{{ route('storage.file', ['path' => $doc->user->avatar]) }}"
-                                                    class="w-full h-full object-cover"> @else
-                                                        {{ substr($doc->user->name, 0, 1) }} @endif
-                                                </div>
-                                                <div class="flex flex-col">
-                                                    <span
-                                                        class="text-xs font-bold text-slate-700 leading-tight">{{ $doc->user->name }}</span>
-                                                    <span class="text-[10px] text-slate-400 leading-tight">ผู้ส่ง</span>
-                                                </div>
-                                            </div>
-
-                                            <!-- Button -->
-                                            <a href="{{ route('documents.show', $doc) }}"
-                                                class="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-brand-600 to-brand-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all text-center md:min-w-[140px]">
-                                                <span class="relative flex h-2 w-2 mr-1">
-                                                    <span
-                                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-                                                </span>
-                                                ลงรับ
-                                            </a>
-                                        </div>
-
+                                    <div>
+                                        <h2 class="font-bold text-slate-800 text-base leading-tight">รอลงรับเอกสาร</h2>
+                                        <p class="text-[11px] text-slate-400">กดลงรับเพื่อยืนยันการรับเอกสาร</p>
                                     </div>
                                 </div>
-                            @endforeach
+                                <span class="bg-gradient-to-r from-red-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm shadow-red-200/40 tabular-nums">
+                                    {{ $incomingDocuments->count() }} รายการ
+                                </span>
+                            </div>
+
+                            {{-- Scrollable Document List --}}
+                            <div class="max-h-[420px] overflow-y-auto custom-scroll divide-y divide-slate-50" id="pending-docs-list">
+                                @foreach($incomingDocuments as $index => $doc)
+                                    @php
+                                        $uc = match ($doc->urgency->name) {
+                                            'ด่วนที่สุด' => ['bar' => 'from-red-500 to-rose-500', 'light' => 'bg-red-50', 'text' => 'text-red-700', 'border' => 'border-red-200', 'badge' => 'bg-red-500'],
+                                            'ด่วนมาก' => ['bar' => 'from-orange-500 to-amber-500', 'light' => 'bg-orange-50', 'text' => 'text-orange-700', 'border' => 'border-orange-200', 'badge' => 'bg-orange-500'],
+                                            'ด่วน' => ['bar' => 'from-amber-400 to-yellow-500', 'light' => 'bg-amber-50', 'text' => 'text-amber-700', 'border' => 'border-amber-200', 'badge' => 'bg-amber-500'],
+                                            default => ['bar' => 'from-blue-500 to-indigo-500', 'light' => 'bg-blue-50', 'text' => 'text-blue-700', 'border' => 'border-blue-200', 'badge' => 'bg-blue-500'],
+                                        };
+                                    @endphp
+                                    <div class="pending-card group relative hover:bg-gradient-to-r hover:from-slate-50/80 hover:to-indigo-50/30 transition-all duration-200" id="pending-doc-{{ $doc->id }}">
+                                        {{-- Colored left accent --}}
+                                        <div class="absolute left-0 top-2 bottom-2 w-1 rounded-full bg-gradient-to-b {{ $uc['bar'] }}"></div>
+
+                                        <div class="flex items-center gap-3 md:gap-4 px-5 md:px-6 py-3.5 pl-5 md:pl-7">
+                                            {{-- Icon --}}
+                                            <div class="hidden md:flex shrink-0">
+                                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:scale-105 transition-transform duration-200 overflow-hidden shadow-sm">
+                                                    @if($doc->user->avatar)
+                                                        <img src="{{ route('storage.file', ['path' => $doc->user->avatar]) }}"
+                                                            class="w-full h-full object-cover" alt="{{ $doc->user->name }}">
+                                                    @else
+                                                        @if($doc->type->name == 'หนังสือภายนอก')
+                                                            <i class="fa-solid fa-cloud-arrow-down text-sky-500 text-sm"></i>
+                                                        @else
+                                                            <i class="fa-solid fa-file-lines text-indigo-400 text-sm"></i>
+                                                        @endif
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            {{-- Content --}}
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold border {{ $uc['light'] }} {{ $uc['text'] }} {{ $uc['border'] }}">
+                                                        <i class="fa-solid fa-bolt text-[7px]"></i>{{ $doc->urgency->name }}
+                                                    </span>
+                                                    <span class="text-[10px] text-slate-400">
+                                                        <i class="fa-regular fa-clock text-[8px]"></i>
+                                                        {{ $doc->created_at->diffForHumans() }}
+                                                    </span>
+                                                </div>
+                                                <a href="{{ route('documents.show', $doc) }}" class="block group/title">
+                                                    <h3 class="font-semibold text-slate-800 text-sm leading-snug truncate group-hover/title:text-indigo-600 transition-colors">
+                                                        {{ $doc->title }}
+                                                    </h3>
+                                                </a>
+                                                <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5 text-[11px] text-slate-400">
+                                                    <span class="font-mono bg-slate-50 px-1 py-0.5 rounded text-[10px]">{{ $doc->document_no }}</span>
+                                                    <span class="text-slate-200">•</span>
+                                                    <span>จาก <span class="font-medium text-slate-500">{{ $doc->department->name }}</span></span>
+                                                </div>
+                                            </div>
+
+                                            {{-- Receive Action --}}
+                                            <div class="shrink-0 flex items-center gap-2">
+                                                <form action="{{ route('documents.process', $doc) }}" method="POST" class="inline receive-form">
+                                                    @csrf
+                                                    <input type="hidden" name="action" value="receive">
+                                                    <button type="submit"
+                                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200/50 hover:shadow-lg hover:shadow-indigo-300/50 hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200 whitespace-nowrap cursor-pointer"
+                                                        aria-label="ลงรับหนังสือ {{ $doc->title }}"
+                                                        onclick="return confirm('ยืนยันลงรับเอกสาร:\n{{ $doc->title }}\n\nเลขที่: {{ $doc->document_no }}');">
+                                                        <span class="relative flex h-1.5 w-1.5">
+                                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                                                            <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
+                                                        </span>
+                                                        ลงรับ
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            {{-- Scroll indicator --}}
+                            @if($incomingDocuments->count() > 4)
+                                <div class="px-5 py-2.5 bg-gradient-to-t from-slate-50/80 to-transparent border-t border-slate-50 text-center" id="scroll-indicator">
+                                    <p class="text-[11px] text-slate-400 flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-angles-down text-[9px] animate-bounce"></i>
+                                        เลื่อนเพื่อดูเพิ่มเติม ({{ $incomingDocuments->count() }} รายการ)
+                                    </p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 @endif
 
-                <!-- Recent Documents Table -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                        <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-                            <i class="fa-regular fa-clock text-slate-400"></i> รายการล่าสุด
-                        </h3>
+                {{-- ======================================= --}}
+                {{-- Recent Documents --}}
+                {{-- ======================================= --}}
+                <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm animate-fade-in-up delay-6">
+                    {{-- Header --}}
+                    <div class="px-5 md:px-6 py-4 border-b border-slate-50 flex justify-between items-center bg-gradient-to-r from-slate-50/80 via-white to-indigo-50/30">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-sm shadow-md shadow-indigo-200/40">
+                                <i class="fa-regular fa-clock"></i>
+                            </div>
+                            <h2 class="font-bold text-slate-800 text-base">รายการล่าสุด</h2>
+                        </div>
                         <a href="{{ route('documents.index') }}"
-                            class="text-sm font-medium text-brand-600 hover:text-brand-700">ดูทั้งหมด</a>
+                            class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors flex items-center gap-1.5 cursor-pointer group"
+                            aria-label="ดูเอกสารทั้งหมด">
+                            ดูทั้งหมด
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
-                                <tr>
-                                    <th class="px-6 py-4 font-semibold">เลขที่ / เรื่อง</th>
-                                    <th class="px-6 py-4 font-semibold">สถานะ</th>
-                                    <th class="px-6 py-4 font-semibold text-right">วันที่</th>
+
+                    {{-- Table --}}
+                    <div class="overflow-x-auto custom-scroll">
+                        <table class="w-full text-sm text-left" aria-label="รายการเอกสารล่าสุด">
+                            <thead>
+                                <tr class="border-b border-slate-50">
+                                    <th class="px-5 md:px-6 py-3 text-[11px] text-slate-400 font-semibold uppercase tracking-wider">เลขที่ / เรื่อง</th>
+                                    <th class="px-5 md:px-6 py-3 text-[11px] text-slate-400 font-semibold uppercase tracking-wider">สถานะ</th>
+                                    <th class="px-5 md:px-6 py-3 text-[11px] text-slate-400 font-semibold uppercase tracking-wider text-right">วันที่</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-50">
+                            <tbody>
                                 @forelse($recentDocuments as $doc)
-                                    <tr class="group hover:bg-slate-50 transition-colors cursor-pointer"
-                                        onclick="window.location='{{ route('documents.show', $doc) }}'">
-                                        <td class="px-6 py-4">
+                                    @php
+                                        $sc = match ($doc->status) {
+                                            'draft' => ['bg' => 'bg-slate-50', 'text' => 'text-slate-500', 'dot' => 'bg-slate-400', 'label' => 'ฉบับร่าง', 'icon' => 'bg-slate-100 text-slate-400'],
+                                            'active' => ['bg' => 'bg-indigo-50', 'text' => 'text-indigo-600', 'dot' => 'bg-indigo-500', 'label' => 'กำลังดำเนินการ', 'icon' => 'bg-indigo-50 text-indigo-500'],
+                                            'closed' => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-600', 'dot' => 'bg-emerald-500', 'label' => 'เสร็จสิ้น', 'icon' => 'bg-emerald-50 text-emerald-500'],
+                                            default => ['bg' => 'bg-slate-50', 'text' => 'text-slate-500', 'dot' => 'bg-slate-400', 'label' => $doc->status, 'icon' => 'bg-slate-100 text-slate-400'],
+                                        };
+                                    @endphp
+                                    <tr class="table-row cursor-pointer border-b border-slate-50/80 last:border-0"
+                                        onclick="window.location='{{ route('documents.show', $doc) }}'"
+                                        role="link" tabindex="0"
+                                        aria-label="ดูเอกสาร {{ $doc->title }}">
+                                        <td class="px-5 md:px-6 py-3.5">
                                             <div class="flex items-start gap-3">
-                                                <div
-                                                    class="mt-1 w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
-                                                    <i class="fa-regular fa-file-lines"></i>
+                                                <div class="mt-0.5 w-9 h-9 rounded-xl {{ $sc['icon'] }} flex items-center justify-center shrink-0">
+                                                    <i class="fa-regular fa-file-lines text-sm"></i>
                                                 </div>
-                                                <div>
-                                                    <div
-                                                        class="font-bold text-slate-800 group-hover:text-brand-600 transition-colors line-clamp-1">
-                                                        {{ $doc->title }}</div>
-                                                    <div class="text-xs text-slate-500 font-mono mt-0.5">{{ $doc->document_no }}
-                                                    </div>
+                                                <div class="min-w-0">
+                                                    <div class="font-semibold text-slate-700 leading-snug line-clamp-1 text-sm">{{ $doc->title }}</div>
+                                                    <div class="text-[11px] text-slate-400 font-mono mt-0.5">{{ $doc->document_no }}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <span
-                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ match ($doc->status) { 'draft' => 'bg-slate-100 text-slate-600', 'active' => 'bg-brand-50 text-brand-600', 'closed' => 'bg-emerald-50 text-emerald-600', default => 'bg-slate-100 text-slate-600'} }}">
-                                                <span
-                                                    class="w-1.5 h-1.5 rounded-full {{ match ($doc->status) { 'draft' => 'bg-slate-400', 'active' => 'bg-brand-500', 'closed' => 'bg-emerald-500', default => 'bg-slate-400'} }}"></span>
-                                                {{ match ($doc->status) { 'draft' => 'ฉบับร่าง', 'active' => 'กำลังดำเนินการ', 'closed' => 'เสร็จสิ้น', default => $doc->status} }}
+                                        <td class="px-5 md:px-6 py-3.5">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $sc['bg'] }} {{ $sc['text'] }}">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $sc['dot'] }}"></span>
+                                                {{ $sc['label'] }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <div class="text-slate-600 font-medium">
-                                                {{ \Carbon\Carbon::parse($doc->updated_at)->toThaiDate() }}</div>
-                                            <div class="text-xs text-slate-400">
-                                                {{ \Carbon\Carbon::parse($doc->updated_at)->diffForHumans() }}</div>
+                                        <td class="px-5 md:px-6 py-3.5 text-right">
+                                            <div class="text-sm text-slate-600 font-medium">{{ \Carbon\Carbon::parse($doc->updated_at)->toThaiDate() }}</div>
+                                            <div class="text-[11px] text-slate-400 mt-0.5">{{ \Carbon\Carbon::parse($doc->updated_at)->diffForHumans() }}</div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-12 text-center text-slate-500">ไม่มีรายการล่าสุด</td>
+                                        <td colspan="3" class="px-6 py-16 text-center">
+                                            <div class="flex flex-col items-center">
+                                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center mb-3 shadow-sm">
+                                                    <i class="fa-regular fa-folder-open text-xl text-slate-300"></i>
+                                                </div>
+                                                <p class="text-sm font-semibold text-slate-400">ไม่มีรายการล่าสุด</p>
+                                                <p class="text-xs text-slate-300 mt-1">เอกสารใหม่จะแสดงที่นี่</p>
+                                            </div>
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -409,39 +506,220 @@
                 </div>
             </div>
 
-            <!-- Right Column: Quick Actions & Tips (1 Col) -->
-            <div class="space-y-6">
+            {{-- ===== RIGHT COLUMN (1/3) ===== --}}
+            <div class="space-y-5">
 
-                <!-- Quick Actions -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="font-bold text-slate-800 mb-4">เมนูด่วน</h3>
-                    <div class="grid grid-cols-2 gap-3">
+                {{-- Quick Actions --}}
+                <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm animate-fade-in-up delay-6">
+                    <h3 class="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center text-xs shadow-sm shadow-purple-200/40">
+                            <i class="fa-solid fa-grip"></i>
+                        </div>
+                        เมนูด่วน
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        {{-- Create --}}
+                        <a href="{{ route('documents.create') }}"
+                            class="action-card flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-indigo-50/80 to-blue-50/60 border border-indigo-100/60 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-100/30 group cursor-pointer"
+                            aria-label="สร้างเอกสารใหม่">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center mb-2 shadow-md shadow-indigo-200/50 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-plus text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600 group-hover:text-indigo-700 transition-colors">สร้างหนังสือ</span>
+                        </a>
+
+                        {{-- Search --}}
                         <a href="{{ route('documents.index') }}"
-                            class="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 border border-slate-100 hover:bg-brand-50 hover:border-brand-100 hover:text-brand-600 transition-all group">
-                            <i
-                                class="fa-solid fa-magnifying-glass text-xl mb-2 text-slate-400 group-hover:text-brand-500"></i>
-                            <span class="text-xs font-bold text-slate-600 group-hover:text-brand-600">ค้นหา</span>
+                            class="action-card flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-sky-50/80 to-cyan-50/60 border border-sky-100/60 hover:border-sky-200 hover:shadow-lg hover:shadow-sky-100/30 group cursor-pointer"
+                            aria-label="ค้นหาเอกสาร">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 text-white flex items-center justify-center mb-2 shadow-md shadow-sky-200/50 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600 group-hover:text-sky-700 transition-colors">ค้นหา</span>
                         </a>
+
+                        {{-- E-Filing --}}
+                        <a href="{{ route('folders.index') }}"
+                            class="action-card flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-violet-50/80 to-purple-50/60 border border-violet-100/60 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/30 group cursor-pointer"
+                            aria-label="ตู้เอกสารออนไลน์">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center mb-2 shadow-md shadow-violet-200/50 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-folder-tree text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600 group-hover:text-violet-700 transition-colors">ตู้เอกสาร</span>
+                        </a>
+
+                        {{-- Profile --}}
                         <a href="{{ route('profile.edit') }}"
-                            class="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 border border-slate-100 hover:bg-purple-50 hover:border-purple-100 hover:text-purple-600 transition-all group">
-                            <i class="fa-solid fa-user-gear text-xl mb-2 text-slate-400 group-hover:text-purple-500"></i>
-                            <span class="text-xs font-bold text-slate-600 group-hover:text-purple-600">ข้อมูลส่วนตัว</span>
+                            class="action-card flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-pink-50/80 to-rose-50/60 border border-pink-100/60 hover:border-pink-200 hover:shadow-lg hover:shadow-pink-100/30 group cursor-pointer"
+                            aria-label="แก้ไขข้อมูลส่วนตัว">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 text-white flex items-center justify-center mb-2 shadow-md shadow-pink-200/50 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-user-gear text-sm"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-600 group-hover:text-pink-700 transition-colors">ข้อมูลส่วนตัว</span>
                         </a>
+
                         @if(Auth::user()->can('access-admin'))
+                            {{-- Reports --}}
                             <a href="{{ route('admin.reports.index') }}"
-                                class="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 border border-slate-100 hover:bg-orange-50 hover:border-orange-100 hover:text-orange-600 transition-all group">
-                                <i class="fa-solid fa-chart-pie text-xl mb-2 text-slate-400 group-hover:text-orange-500"></i>
-                                <span class="text-xs font-bold text-slate-600 group-hover:text-orange-600">รายงาน</span>
+                                class="action-card flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-orange-50/80 to-amber-50/60 border border-orange-100/60 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-100/30 group cursor-pointer"
+                                aria-label="ดูรายงานสรุป">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center mb-2 shadow-md shadow-orange-200/50 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-chart-pie text-sm"></i>
+                                </div>
+                                <span class="text-xs font-bold text-slate-600 group-hover:text-orange-700 transition-colors">รายงาน</span>
                             </a>
+
+                            {{-- Users --}}
                             <a href="{{ route('admin.users.index') }}"
-                                class="flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 border border-slate-100 hover:bg-emerald-50 hover:border-emerald-100 hover:text-emerald-600 transition-all group">
-                                <i class="fa-solid fa-users-gear text-xl mb-2 text-slate-400 group-hover:text-emerald-500"></i>
-                                <span class="text-xs font-bold text-slate-600 group-hover:text-emerald-600">ผู้ใช้งาน</span>
+                                class="action-card flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-teal-50/80 to-emerald-50/60 border border-teal-100/60 hover:border-teal-200 hover:shadow-lg hover:shadow-teal-100/30 group cursor-pointer"
+                                aria-label="จัดการผู้ใช้งาน">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white flex items-center justify-center mb-2 shadow-md shadow-teal-200/50 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-users-gear text-sm"></i>
+                                </div>
+                                <span class="text-xs font-bold text-slate-600 group-hover:text-teal-700 transition-colors">ผู้ใช้งาน</span>
                             </a>
                         @endif
+                    </div>
+                </div>
+
+                {{-- Summary Overview Card --}}
+                <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm animate-fade-in-up delay-7">
+                    <h3 class="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 text-white flex items-center justify-center text-xs shadow-sm shadow-blue-200/40">
+                            <i class="fa-solid fa-chart-simple"></i>
+                        </div>
+                        สรุปภาพรวม
+                    </h3>
+                    <div class="space-y-2">
+                        {{-- Row items --}}
+                        @php
+                            $summaryItems = [
+                                ['label' => 'หนังสือเข้า', 'value' => $inboxCount, 'color' => 'from-blue-500 to-indigo-500', 'dot' => 'bg-blue-500'],
+                                ['label' => 'หนังสือออก', 'value' => $outboxCount, 'color' => 'from-emerald-500 to-teal-500', 'dot' => 'bg-emerald-500'],
+                                ['label' => 'กำลังดำเนินการ', 'value' => $activeCount, 'color' => 'from-amber-400 to-orange-500', 'dot' => 'bg-amber-500'],
+                                ['label' => 'ด่วนที่สุด', 'value' => $urgentCount, 'color' => 'from-red-500 to-rose-500', 'dot' => 'bg-red-500'],
+                                ['label' => 'รอลงรับ', 'value' => $incomingDocuments->count(), 'color' => 'from-pink-500 to-rose-500', 'dot' => 'bg-pink-500'],
+                            ];
+                        @endphp
+                        @foreach($summaryItems as $si)
+                            <div class="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-slate-50/80 transition-colors group">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-gradient-to-r {{ $si['color'] }} shadow-sm"></div>
+                                    <span class="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">{{ $si['label'] }}</span>
+                                </div>
+                                <span class="text-sm font-bold text-slate-800 tabular-nums bg-slate-50 px-2.5 py-0.5 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all">
+                                    {{ number_format($si['value']) }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Bar Chart --}}
+                    @php
+                        $total = max($inboxCount + $outboxCount, 1);
+                        $inboxPct = round(($inboxCount / $total) * 100);
+                        $outboxPct = 100 - $inboxPct;
+                    @endphp
+                    <div class="mt-4 pt-4 border-t border-slate-50">
+                        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">สัดส่วนเข้า / ออก</p>
+                        <div class="flex rounded-full overflow-hidden h-3 bg-slate-100 shadow-inner">
+                            <div class="bar-segment bg-gradient-to-r from-blue-500 to-indigo-500 rounded-r-full" style="width: {{ $inboxPct }}%"></div>
+                            <div class="bar-segment bg-gradient-to-r from-emerald-400 to-teal-500 rounded-l-full" style="width: {{ $outboxPct }}%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2">
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                                <span class="text-[11px] text-blue-600 font-semibold">เข้า {{ $inboxPct }}%</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-2 h-2 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+                                <span class="text-[11px] text-emerald-600 font-semibold">ออก {{ $outboxPct }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- System Info Card --}}
+                <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-500 rounded-2xl p-5 shadow-lg shadow-indigo-200/40 animate-fade-in-up delay-8">
+                    {{-- Decorative circles --}}
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full"></div>
+                    <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/10 rounded-full"></div>
+                    <div class="absolute top-1/2 right-1/4 w-8 h-8 bg-white/5 rounded-full"></div>
+
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                                <i class="fa-solid fa-folder-open text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-white">ระบบสารบรรณ</p>
+                                <p class="text-[11px] text-white/60">อิเล็กทรอนิกส์</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-white/70 leading-relaxed">
+                            ระบบจัดการหนังสือราชการ รับ-ส่ง ติดตามสถานะ และจัดเก็บเอกสารอิเล็กทรอนิกส์อย่างมีประสิทธิภาพ
+                        </p>
+                        <div class="mt-4 pt-3 border-t border-white/10">
+                            <div class="flex items-center gap-2 text-white/50 text-[10px]">
+                                <i class="fa-regular fa-copyright"></i>
+                                <span>พัฒนาโดย รร.พธ.พธ.ทร.</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- Live Clock --}}
+    <script>
+        (function() {
+            const clockEl = document.getElementById('live-clock');
+            if (!clockEl) return;
+
+            const thaiMonths = [
+                'มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'
+            ];
+
+            function updateClock() {
+                const now = new Date();
+                const day = now.getDate();
+                const month = thaiMonths[now.getMonth()];
+                const year = now.getFullYear() + 543;
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                clockEl.textContent = `${day} ${month} ${year} ${hours}:${minutes}:${seconds} น.`;
+            }
+
+            updateClock();
+            setInterval(updateClock, 1000);
+        })();
+
+        // Scroll indicator for pending docs
+        (function() {
+            const list = document.getElementById('pending-docs-list');
+            const indicator = document.getElementById('scroll-indicator');
+            if (!list || !indicator) return;
+
+            list.addEventListener('scroll', function() {
+                const isAtBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 20;
+                indicator.style.opacity = isAtBottom ? '0' : '1';
+                indicator.style.transition = 'opacity 0.3s ease';
+            });
+        })();
+
+        // Receive form loading state
+        document.querySelectorAll('.receive-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn && !btn.disabled) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i> กำลังลงรับ...';
+                    btn.classList.add('opacity-75', 'cursor-not-allowed');
+                }
+            });
+        });
+    </script>
 @endsection

@@ -195,28 +195,53 @@
                                 <!-- Col 5: Status Badge -->
                                 <td class="px-6 py-4 text-right">
                                     @php
-                                        $statusClass = match ($doc->status) {
+                                        // คำนวณสถานะจริง: กรณี outbox + active → ตรวจสอบว่ารับครบหมดแล้วหรือยัง
+                                        $effectiveStatus = $doc->status;
+
+                                        if ($tab == 'outbox' && $doc->status === 'active') {
+                                            $sendRoutes = $doc->routes->where('action', 'send');
+                                            $receiveRoutes = $doc->routes->where('action', 'receive');
+
+                                            if ($sendRoutes->isNotEmpty()) {
+                                                // นับผู้รับที่ต้องรับ (แยก user / department)
+                                                $sentToUsers = $sendRoutes->whereNotNull('to_user_id')->pluck('to_user_id')->unique();
+                                                $sentToDepts = $sendRoutes->whereNotNull('to_department_id')->pluck('to_department_id')->unique();
+
+                                                // นับที่รับแล้ว
+                                                $receivedByUsers = $receiveRoutes->pluck('from_user_id')->unique();
+                                                $receivedByDepts = $receiveRoutes->map(fn($r) => $r->fromUser?->department_id)->filter()->unique();
+
+                                                $allUsersReceived = $sentToUsers->isEmpty() || $sentToUsers->diff($receivedByUsers)->isEmpty();
+                                                $allDeptsReceived = $sentToDepts->isEmpty() || $sentToDepts->diff($receivedByDepts)->isEmpty();
+
+                                                if ($allUsersReceived && $allDeptsReceived) {
+                                                    $effectiveStatus = 'closed';
+                                                }
+                                            }
+                                        }
+
+                                        $statusClass = match ($effectiveStatus) {
                                             'draft' => 'bg-slate-100 text-slate-600 border border-slate-200',
                                             'active' => 'bg-brand-50 text-brand-600 border border-brand-100',
                                             'closed' => 'bg-emerald-50 text-emerald-600 border border-emerald-100',
                                             'cancelled' => 'bg-red-50 text-red-600 border border-red-200',
                                             default => 'bg-slate-100 text-slate-600'
                                         };
-                                        $statusText = match ($doc->status) {
+                                        $statusText = match ($effectiveStatus) {
                                             'draft' => 'ฉบับร่าง',
                                             'active' => 'กำลังดำเนินการ',
                                             'closed' => 'ดำเนินการเสร็จสิ้น',
                                             'cancelled' => 'ยกเลิกการส่ง',
-                                            default => $doc->status
+                                            default => $effectiveStatus
                                         };
                                     @endphp
                                     <span
                                         class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
-                                        @if($doc->status == 'closed')
+                                        @if($effectiveStatus == 'closed')
                                             <i class="fa-solid fa-circle-check"></i>
-                                        @elseif($doc->status == 'active')
+                                        @elseif($effectiveStatus == 'active')
                                             <span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
-                                        @elseif($doc->status == 'cancelled')
+                                        @elseif($effectiveStatus == 'cancelled')
                                             <i class="fa-solid fa-ban text-red-500"></i>
                                         @else
                                             <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
